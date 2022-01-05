@@ -21,17 +21,26 @@ A ce stade, il vous est possible de vous connecter à votre compte via SSH (voir
 
 # Joindre le projet form_2022_07
 
-Nous utiliserons le projet `form_2022_07` que j'ai déjà créé pour analyser ensemble un premier jeu de données.  
-Il vous suffit de me transmettre votre login (= username = user id ; pas votre mot de passe!) pour que je puisse vous ajouter à ce projet.  
+Nous utiliserons le projet `form_2022_07` que j'ai déjà créé pour analyser nos données.  
+Il vous suffit donc de me transmettre votre login (= username = user id ; pas votre mot de passe!) pour que je puisse vous ajouter à ce projet.  
 Toutes les données du projet sont stockées dans le répertoire `/shared/projects/form_2022_07`  
+J'ai créé plusieurs sous-dossiers dans ce répertoire:
+
+`form_2022_07`  
+&nbsp;&nbsp;&nbsp;&nbsp;├── `projet_groupe1`  
+&nbsp;&nbsp;&nbsp;&nbsp;├── `projet_groupe2`  
+&nbsp;&nbsp;&nbsp;&nbsp;├── `projet_groupe3`  
+&nbsp;&nbsp;&nbsp;&nbsp;├── `projet_groupe4`  
+&nbsp;&nbsp;&nbsp;&nbsp;└── `TD_RNAseq`  
+
+Le dossier `TD_RNAseq` nous servira à analyser un jeu de données ensemble.  
+Vous utiliserez les autres sous-dossiers pour les projets en sous-groupe.  Vous auez les droits d'écriture et de lecture sur ces sous-dossier.  
 
 
-# Créer un projet pour analyser vos données
+# Créer un projet pour analyser vos données dans le futur
 
-Pour analyser vos données, il vous faut créer un projet en vous connectant avec votre login/password sur [https://my.cluster.france-bioinformatique.fr/](https://my.cluster.france-bioinformatique.fr/).  
-Si vous travaillez en binôme, un(e) seul(e) d'entre vous peut créer le projet puis il/elle pourra ajouter son/sa camarade via l'interface [https://my.cluster.france-bioinformatique.fr/](https://my.cluster.france-bioinformatique.fr/).  
+Dans le futur, pour conduire vos propres projets sur la plateforme IFB core, il vous faut créer un projet en vous connectant avec votre login/password sur [https://my.cluster.france-bioinformatique.fr/](https://my.cluster.france-bioinformatique.fr/).     
 De la même manière, les données de votre projet seront stockées sous `/shared/projects/<project_name>`  
-
 
 
 > **ATTENTION:**  
