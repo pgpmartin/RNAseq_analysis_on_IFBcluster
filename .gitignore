@@ -1,0 +1,6 @@
+*.Rproj
+*.odt
+*.docx
+.Rproj.user/
+img/*.odp
+
