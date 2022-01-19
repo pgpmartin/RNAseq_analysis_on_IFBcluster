@@ -12,7 +12,11 @@ En voici quelques unes (liste loin d'être exhaustive):
   - Une bonne introduction video en français aux [commandes unix de bases](https://www.youtube.com/watch?v=4jlPZtc17l8)  
   - Une liste détaillée des [principales commandes](https://doc.ubuntu-fr.org/tutoriel/console_commandes_de_base)
   - Un cours très complet d'[introduction à Linux](https://aful.org/ressources/formations/formation-introduction-linux/downloadFile/file/IntroductionLinux.pdf) qui va au delà des commandes des commandes de base
+  - Un guide d'[outils avancés](https://tldp.org/LDP/abs/html/index.html) pour l'écriture de scripts en bash (en anglais et une traduction en [français](https://abs.traduc.org/abs-5.0-fr/index.html))   
 
+
+
+Ce qui nous permet de communiquer avec le système d'exploitation est appelé l'interface système ou le [shell](https://fr.wikipedia.org/wiki/Interface_syst%C3%A8me). C'est une interface en ligne de commande à laquelle on accède via un terminal / une console. Dans les sytèmes [Unix](https://fr.wikipedia.org/wiki/Shell_Unix), il existe plusieurs interpréteurs de commandes dont les syntaxes diffèrent légèrement. Nous utiliserons l'interpréteur le plus courant : [Bash](https://fr.wikipedia.org/wiki/Bourne-Again_shell)  
 
 <br>
 
@@ -390,3 +394,305 @@ touch fich1.txt fich1.mp3 fich2.txt fich3.txt fich4.txt fich21.txt
   wc -l fich1.txt 
   ```
   
+
+<br>
+
+# VARIABLES
+
+> Paragraphe concernant une utilisation plus avancée  
+
+Quelques documents utiles concernant les variables:
+
+  - Une excellente introduction aux [variables d'environnement Unix](https://chamilo.grenoble-inp.fr/courses/ENSIMAG3MMUNIX/document/avance/seance2-varenv-pas-pas/tp-pas-pas-varenv.pdf)
+  - Documentation Ubuntu sur les [variables d'environnement](https://doc.ubuntu-fr.org/variables_d_environnement)  
+  - La [manipulation de texte](https://tldp.org/LDP/abs/html/string-manipulation.html) sous Unix
+  
+
+## Variables d'environnement  
+
+### Définition  
+Dans unix/linux, l'environnement est composé de *variables* qui décrivent comment il fonctionne (exemple: la langue, le fuseau horaire, la localisation du dossier home, le nom de l'ordinateur, le nom de l'utilisateur, etc.).  
+On appelle ces variables des **variables d'environnement**.  
+Pour accéder aux variables qui composent votre environnement, utilisez la commande `env`.  
+Pour accéder à la valeur prise par une variable précise, on la précède du signe `$`.  
+Par exemple, la variable `LANG` indique la langue utilisée: `echo $LANG` ou bien `echo "$LANG"`   
+
+
+### Portée et héritabilité  
+Lorsque vous ouvrez un terminal, vous lançez un processus `bash` auquel seront automatiquement affectées des valeurs par défaut d'un certain nombre de variables d'environnement (cf `env`).  
+Si vous changez les valeurs de certaines variables ou que vous créez de nouvelles variables (voir plus bas) à l'intérieur d'un terminal/processus, cette modification gardera une portée locale, c'est à dire qu'il en sera tenu uniquement à l'intérieur de ce terminal/processus.  
+Quand on souhaite qu'une variable soit héritée d'un processus parent à un processus enfant, il faut *exporter* la variable.  
+
+Un exemple qui fonctionnera sous Ubuntu (dans lequel la commande `gnome-terminal` lance un nouveau terminal):  
+```bash
+# ouvrez un terminal (Terminal 1) et crez la variable
+MYNAME="John DOE"
+# lancez un autre terminal (Terminal 2) en tapant dans Terminal 1 la commande:
+gnome-terminal
+# Terminal 2 est un processus enfant de Terminal 1 
+# La variable MYNAME n'a aucune valeur dans Terminal 2 car elle n'a pas été exportée dans Terminal 1:
+echo $MYNAME
+# Fermer le Terminal 2
+# Dans Terminal 1 taper:
+export MYNAME
+# Puis (ouverture d'un nouveau processus: Terminal 3)
+gnome-terminal
+#A présent, dans Terminal 3, la variable MYNAME existe:
+echo $MYNAME
+```
+
+Une variable peut également être définie/modifiée et exportée uniquement par un programme particulier (et ses descendants). Pour cela on fait la modification de la variable dans la même commande dans laquelle on lance le programme.  
+Par exemple:  
+
+```bash
+echo $TZ #affiche le fuseau horaire
+date # programme qui donne la date et l'heure
+TZ='Europe/London' date #On change la variable TZ puis on affiche la date
+echo $TZ #la variable d'environnement TZ n'a pas été modifiée
+```
+
+Enfin, le fichier `~/.bashrc` est lu à chaque démarrage d'un 
+
+### Exemple: la variable PATH  
+La variable `PATH` contient la liste des répertoires dans lesquels le système cherche un programme à exécuter. Les répertoires sont séparés par le signe `:`.  
+Ainsi, si la variable `PATH` contient `/usr/bin:/usr/sbin:/usr/local/bin`, et qu'on écrit dans un terminal `echo "Bonjour"`, le système recherchera le programme `echo` dans l'un des 3 répertoires:
+
+  - `/usr/bin`  
+  - `/usr/sbin`  
+  - `/usr/local/bin`  
+  
+Si il ne le trouve pas, il renverra une erreur.  
+
+La commande `which` renvoie le chemin où se trouve un programme.  
+Par exemple : `which echo` renvoie `/usr/bin/echo`.  
+Unix a trouvé la commande (=le programme) `echo` car elle se trouve dans l'un des dossiers de la variable d'environnement `PATH`.  
+On peut le vérifier en tappant : `echo $PATH` ou bien `echo "$PATH"` et on constate qu'il y a bien écrit quelque part `/usr/bin`, encadré par des `:`.  
+
+Si, lors d'une session de travail, je sais que je vais utiliser plusieurs programmes qui se trouvent dans le dossier `~/Softwares`, je peux ajouter ce chemin à la variable `PATH`:  
+
+```bash
+PATH="$PATH":~/Softwares
+#ou bien
+PATH=~/Softwares:"$PATH"
+#puis
+export PATH
+```
+
+ou bien directement:
+```bash
+export PATH="$PATH":~/Softwares
+```
+
+### Quelques autres variables d'environement
+
+  - `HOME` contient le chemin du répertoire home. Voir `echo $HOME`
+  - `USER` contient le nom d'utilisateur. Parfois aussi `USERNAME` et `LOGNAME`.
+
+```bash
+echo "Mon username est $USER"
+```
+
+  - `PWD` contient le répertoire courant
+
+```bash
+cd ~
+echo $PWD
+cd ~/Documents
+echo $PWD
+```
+
+  - `TMPDIR` contient (parfois) le chemin du répertoire temporaire. Par défaut les répertoires `/tmp` et `/var/tmp` sont utilisés  
+  
+  - `$RANDOM` est en fait une fonction interne de Bash qui renvoie un nombre entier [pseudo-aléatoire](https://abs.traduc.org/abs-fr/ch09s03.html) dans l'intervalle 0-32767    
+  - `SHELL` contient l'interpréteur par défaut. Voir `echo $SHELL`  
+  - `PS1` définit l'allure du prompt. Voici des [exemples](https://linux-attitude.fr/post/modifier-son-prompt)  
+  
+
+### Création et utilisation de variables  
+
+Une variable n'est autre qu'un étiquette affectée à un contenu.
+
+> Pour **définir** une variable on écrit simplement son nom, sans `$`, et suivi de `=` (**sans espaces**)  
+> Pour **supprimer** une variable on utilise la commande `unset`  
+> Pour **utiliser** le contenu d'une variable, on précède son nom du signe `$`  
+> Pour **modifier** le contenu d'une variable, on précède son nom du signe `$` et on l'encadre par de accolades `{}`  
+
+
+Exemples:  
+
+```bash
+MYNAME="John"
+echo "My name is $MYNAME"
+echo "My name is MYNAME"
+#on remplace "hn" par "sh" :
+MYNAME=${MYNAME/hn/sh}
+echo "My name is $MYNAME"
+unset MYNAME
+echo "My name is $MYNAME"
+```
+
+**Guillemets ou apostrophes ?**  
+Lorsqu'on référence une variable, il est conseillé de placer son nom entre des **guillemets** (doubles) `" "`. Ainsi les caractères spéciaux à l'intérieur de la chaîne de caractères ne seront pas interprétés, mis à part les caractères `$`, ``\`` (caractère d'échappement) et `` ` `` (apostrophe inversée). Comme le signe `$` est toujours interprété (sauf s'il est précédé du signe `\`), la variable sera remplacée par son contenu.  
+En revanche, encadrer une chaîne de caractères par des **apostrophes** ou guillemet simple: `' '` empêche l'interprétation ou l'expansion par le shell:  
+
+```bash
+MYNAME="John"
+echo My name is "$MYNAME"
+echo My name is '$MYNAME'
+```
+
+**valeur par défaut d'une variable**  
+Dans un script, il est également possible d'affecter une valeur par défaut à une variable. La variable ne prendra ainsi la valeur par défaut que si la variable est vide:  
+
+```bash
+#La variable est vide:
+unset MYNAME
+#On peut également utiliser:
+MYNAME=""
+# On lui donne la valeur par défaut "John"
+MYNAME=${MYNAME:-John}
+# Donc elle prend la valeur "John"
+echo "My name is $MYNAME"
+
+# La variable contient quelque chose:
+MYNAME="Sam"
+# On lui donne la valeur par défaut "John"
+MYNAME=${MYNAME:-John}
+# Elle garde la valeur qu'elle avait
+echo "My name is $MYNAME"
+```
+
+
+### Modification de variables / manipulation de texte  
+
+Il existe de multiples façons de modifier une chaine de charactères contenue dans une variable. On se réfèrera notamment à ce [guide](https://tldp.org/LDP/abs/html/string-manipulation.html) très pratique.  
+
+Pour illustrer quelques outils de manipulation de texte, nous allons partir d'une variable contenant le chemin (fictif) vers un fichier. Les fonctions `basename` et `dirname` sont utiles pour manipuler les chemins:  
+
+```bash
+MYFILEPATH="/shared/projects/myfolder/mydata/Sample1_R1_L001.fastq.gz"
+#longueur de la chaine de charactères
+echo ${#MYFILEPATH}
+
+#le dossier dans lequel se trouve le fichier:
+dirname "$MYFILEPATH"
+#le nom du fichier:
+basename "$MYFILEPATH"
+
+# créer une nouvelle variable contenant uniquement le nom du fichier:
+MYFILE=$(basename "$MYFILEPATH")
+echo "$MYFILE"
+```
+
+
+Extraire une partie de la chaine de caractère
+
+```bash
+#Extraire 2 caractères à partir de la 9ème lettre:
+echo "${MYFILE:8:2}"
+#la numérotation commence à 0
+echo "${MYFILE:0:3}"
+```
+
+Supprimer la fin d'une chaine de caractère:  
+
+```bash
+#pour supprimer l'extension ".gz" du nom de fichier:
+echo "${MYFILEPATH%%.gz}"
+#par exemple pour décompresser le fichier sans supprimer le fichier compressé de départ:
+gunzip -c "$MYFILEPATH" > "${MYFILEPATH%%.gz}"
+```
+
+On peut utiliser des caractères spéciaux pour définir la chaine de caractère à éliminer. Ainsi on utilisera `%` (une seule fois) pour éliminer le match le plus court et `%%` (2 fois) pour le match le plus long.
+
+```bash
+echo "${MYFILEPATH%.*gz}"
+echo "${MYFILEPATH%%.*gz}"
+```
+
+Supprimer le début d'une chaîne de caractères:
+
+```bash
+# Supprimer "Sample"
+echo ${MYFILE#Sample}
+# Supprimer le match le plus court
+echo ${MYFILE#S*1}
+# ou le match le plus long
+echo ${MYFILE##S*1}
+```
+
+Remplacer une partie d'une chaine de caractère:  
+
+```bash
+echo ${MYFILE/Sample1/Sample2}
+echo ${MYFILE/_R1_/_R2_}
+```
+
+
+### Variable Array
+
+Une **variable array** est un type de variable particulier qui peut contenir plusieurs valeurs.  
+En bash on peut créer un array ainsi:  
+
+```bash
+MyArray=("Sam" "John" "Josh" "Will")
+```
+
+Les index des valeurs dans l'array commence par l'index 0.  
+On peut extraire des valeurs individuelles de l'array avec:
+```bash
+echo "${MyArray[0]}"
+echo "${MyArray[1]}"
+echo "${MyArray[2]}"
+echo "${MyArray[3]}"
+echo "${MyArray[4]}" #empty
+```
+
+Ajouter une valeur dans l'array (ou remplacer une valeur existante):
+```bash
+MyArray[4]="Dave"
+```
+
+Pour renvoyer toutes les valeurs en même temps:  
+```bash
+echo "${MyArray[@]}"
+# ou bien
+echo "${MyArray[*]}"
+```
+
+Nombre d'éléments contenu dans un array:
+```bash
+echo ${#MyArray[@]}
+#ou bien 
+echo ${#MyArray[*]}
+```
+
+Indices des éléments de l'array:
+```bash
+echo ${!MyArray[@]}
+#ou bien 
+echo ${!MyArray[*]}
+```
+
+Une boucle utilisant les valeurs d'un array:  
+```bash
+for myname in "${MyArray[@]}"
+do
+  echo My name is "$myname"
+done
+```
+
+Une boucle utilisant les indices d'un array:
+```bash
+for i in ${!MyArray[@]} 
+  do 
+    echo My name is "${MyArray[$i]}" 
+  done
+
+# ou bien
+
+for ((i = 0; i < ${#MyArray[@]}; i++)) 
+  do 
+    echo My name is "${MyArray[$i]}" 
+  done
+```
