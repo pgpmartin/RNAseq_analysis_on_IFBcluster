@@ -7,7 +7,7 @@ title: Introduction à SLURM
 [SLURM](https://slurm.schedmd.com) est un gestionnaire de fil  ou *scheduler* en anglais. Une fois connecté au serveur frontal via `ssh` c'est via **SLURM** que nous pourrons lancer des "**jobs**", sous forme de scripts, sur le cluster de calcul.   
 **SLURM** va gérer pour nous la file d'attente (i.e. quand notre job sera lancé compte tenu des autres jobs en attente et des ressources disponibles) et quelles sont les ressources qui lui seront allouées (typiquement temps, CPU, mémoire).  
 
-![Structure Plateforme Bioinformatique](img/BioinfoPlatform_Structure.png)
+![](img/BioinfoPlatform_Structure.png)
 
 Une [fiche résumée](https://slurm.schedmd.com/pdfs/summary.pdf) des commandes slurm et une [documentation complète](https://slurm.schedmd.com/man_index.html) des différentes commandes sont disponible en ligne.  
 **SLURM** nous permettra également de nous connecter directement à un noeud du cluster pour y lancer des commandes de manière **interactive**, c'est à dire qu'on pourra écrire et lancer une commande et qu'elle s'exécutera immédiatement.  
@@ -65,12 +65,12 @@ echo 'Hello World'
 
 On peut créer ce fichier, que l'on nomme `HelloWorld.sh` en ligne de commande de la manière suivante:
 
-```
+```bash
 printf "%s\n" '#!/bin/bash' > HelloWorld.sh
 printf "%s\n" "echo 'Hello World'" >> HelloWorld.sh
 ```
 
-Si on vérifie la création du fichier à l'aide de la commande `ls -l`, on constate qu'on ne possède pas les droits pour exécuter ce fichier.  
+Si on vérifie la création du fichier `HelloWorld.sh` à l'aide de la commande `ls -l`, on constate qu'on ne possède pas les droits pour exécuter ce fichier.  
 Les droits sont `-rw-rw-r--`, autrement dit tout le monde peut lire le fichier (`r`), l'utilisateur et les membres du groupes peuvent écrire (`w`) dans le fichier mais personne ne peut l'exécuter (`x`).  
 Le script n'est donc pas utilisable pour l'instant.  
 Pour cela, on donne à l'utilisateur les droits d'exécution avec:
@@ -83,7 +83,7 @@ On vérifie avec la commande `ls -l` que l'on dispose bien des droits d'exécuti
 
 Comme notre script ne consomme quasiment aucune resource, on peut le lancer directement en tapant:
 
-```
+```bash
 ./HelloWorld.sh
 ```
 
@@ -120,17 +120,133 @@ sbatch \
   HelloWorld.sh
 ```
 
-*Notez l'utilisation du signe `\` en fin de ligne pour étaler une même commande sur plusieurs lignes.*
+*Notez l'utilisation du signe `\` en fin de ligne pour séparer une même commande sur plusieurs lignes. Ce signe doit être le dernier caractère de la ligne (donc pas d'expace après!)*
 
-## Gestion des ressources
 
+## Gestion des ressources et options courantes
+
+Les options les plus couramment utilisées avec `sbatch` sont:
+
+  - `-A` ou bien `--account=<account>`.  
+  Nous utiliserons cette option sur la plateforme de l'[IFB](https://www.france-bioinformatique.fr/) pour spécifier qu'un job doit être affecté à un projet spécifique.  
+  
+```bash
+#un job assigné au projet form_2022_07
+sbatch --account=form_2022_07 HelloWorld.sh
+```
+
+  - `-t` ou bien `--time=<time>` pour péciser le temps maximum assigné à un job. Les formats possibles sont:  
+      - "minutes"  
+      - "minutes:secondes"  
+      - "heures:minutes:secondes"  
+      - "jours-heures"  
+      - "jours-heures:minutes"  
+      - "jours-heures:minutes:secondes"  
+
+```bash
+#Un job de 10 secondes en utilisant le format jours-heures:minutes:secondes
+sbatch --time="0-0:0:10" HelloWorld.sh
+```
+
+  - `-J` ou bien `--job-name=<jobname>`. Le nom du job (différent du `<job_id>`)   
+
+```bash
+#Un job appelé HelloWorld
+sbatch --job-name="HelloWorld" HelloWorld.sh
+```
+
+  - `--mem=<size>[units]` ou bien `--mem-per-cpu=<size>[units]` pour assigner une quantité de mémoire au job. L'unité `[units]` par défaut est le megabyte mais il est possible d'utiliser les suffixes `K` (kilo), `M` (mega), `G` (giga) et `T` (tera).   
+
+```bash
+#Un job utilisant 100K de mémoire:
+sbatch --mem=100K HelloWorld.sh
+```
+
+
+  - `--mail-type=<type>` pour contrôler quand un e-mail doit être envoyé à l'utilisateur. Les valeurs possibles de `<type>` sont `NONE`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ALL` et peuvent être combinées en les séparant par une virgule.  
+  - `--mail-user=<user>` l'adresse à laquelle envoyer les e-mails (par défaut l'adresse fournie par l'utilisateur lors de son inscription)
+
+```bash
+#Un job qui m'envoie plein d'emails
+sbatch \
+  --mail-type==BEGIN,FAIL,END \
+  --mail-user=mon.adresse@email.com \
+  HelloWorld.sh
+```
+
+  - `--wrap="<command>"` permet de lancer directement une commande, sans l'empaqueter dans un script
+
+```bash
+#Un job simple soumis sans script
+sbatch --wrap "echo Hello World"
+# Cette option est pratique pour lancer par exemple un script R avec:
+sbatch --wrap "Rscript monScript.R"
+```
+
+<br>
+
+Dans certains cas, un programme peut utiliser plusieurs processeurs (calcul parallèle), voire un script peut lancer plusieurs tâches/programmes qui peuvent également être lancés en parallèle. Les options ci-dessous sont utilisées dans ces cas pour réserver les ressources nécessaires à ce type de job :  
+
+  - `-c` ou bien `--cpus-per-task=<ncpus>`. Nombre de processeurs par tâche. Un processus qui a 4 tâches et requiert `--cpus-per-task=6`, recevra ainsi 6 processeurs issus d'un même noeud pour chaque tâche, soit 6 processeurs x 4 noeuds = 24 processeurs au total.
+  - `-N` ou bien `--nodes=<minnodes>` pour spécifier le nombre minimum de noeuds affectés à un job.
+  - `-n` ou bien `--ntasks=<number>`  pour spécifier le nombre de tâches lancées en parallèle par le script.
+
+D'autres explications sur la soumission de jobs parallèles sont disponibles [ici](https://kb.iu.edu/d/awrz).   
+Nous nous contenterons en général d'utiliser des scripts qui ne lance qu'une seule tâche ou bien des tâches successives et non parallèles. Mais certains programmes pourront utiliser plusieurs processeurs, nous utiliserons donc essentiellement l'option `--cpus-per-task=<ncpus>`.  
+
+
+```bash
+#Un job demandant 2 processeur (mais n'en utilisant qu'un en pratique...):
+sbatch --cpus-per-task=2 HelloWorld.sh
+```
+
+
+Toutes ces options peuvent bien sûr être combinées, rendant parfois les commandes `sbatch` assez touffues:  
+
+```bash
+sbatch \
+  --time=00:00:30  \
+  --job-name="Hello_World" \
+  --output="output_%j.out" \
+  --error="error_%j.err" \
+  --mem=100K \
+  --cpus-per-task=2 \
+  --mail-type=BEGIN,END,FAIL \
+  HelloWorld.sh
+```
+
+<br>
+
+## Incorporer les options directement dans le script      
+
+De fait, parmi les nombreuses options qui existent pour la commande `sbatch` on en utilise en général un nombre relativement limité et souvent les mêmes.  
+Afin d'alléger au maximum les commandes `sbatch` et de garder une traçabilité sur les ressources allouées à chaque job, il est possible d'incorporer les options de la commandes `sbatch` directement dans le script qui contient nos commandes en plaçant ces options en début de script (après le shebang) et en les faisant précéder par `#SBATCH `.  
+
+Un exemple de script :
+
+```bash
+# !/bin/bash
+#SBATCH --time=00:00:30  #30s job time limit
+#SBATCH -J Hello_World #job name
+#SBATCH --output=output_%j.out #output file name
+#SBATCH --error=error_%j.err #error file name
+#SBATCH --mem=100K #memory reservation
+#SBATCH --cpus-per-task=2 #ncpu on the same node
+#SBATCH --mail-type=BEGIN,END,FAIL 
+
+echo "Hello World!"
+```
+
+Si le script se nomme `MonHello.sh`, il sera simplement lancé avec `sbatch MonHello.sh` et toutes les options indiquées dans le scripts seront utilisées par **SLURM**.
+
+<br>
 
 ## Utilisation des variables d'environnement
 
 > Paragraphe concernant une utilisation avancée
 
 A l'intérieur d'un script, il est possible d'utiliser des [variables d'environnement](https://fr.wikipedia.org/wiki/Variable_d%27environnement) définies dans l'environnement depuis lequel on lance le job (pour nous : le serveur frontal) en les propageant à l'environnement dans lequel le script est exécuté (pour nous, sur le cluster de calcul).  
-Ainsi, la variable `USER` contient notre `<username>` sur la plateforme: `echo $USER`  
+Ainsi, la variable `USER` contient notre `<username>` sur la plateforme : voir `echo "$USER"`  
 
 On peut créer un simple script qui renvoie `Hello <username>` comme suit:  
 
@@ -141,27 +257,27 @@ printf "%s\n" 'echo "Hello $USER"' >> HelloUser.sh
 
 et le lancer avec: `sbatch HelloUser.sh` qui est équivalent à `sbatch --export=ALL HelloUser.sh` (`ALL` étant la valeur par défaut).  
 
-Par contre, si je créé une nouvelle variable, par exemple `MONNOM="John DOE"` et que je modifie mon script pour qu'il utilise cette nouvelle variable:  
+Par contre, si on créé une nouvelle variable, par exemple `MONNOM="John DOE"` et qu'on modifie le script pour qu'il utilise cette nouvelle variable:  
 
 ```bash
 printf "%s\n" '#!/bin/bash' > HelloUser.sh
 printf "%s\n" 'echo "Hello $MONNOM"' >> HelloUser.sh
 ```
 
-dans ce cas les différentes commandes `./HelloUser.sh` ou bien `sbatch HelloUser.sh` ou encore `sbatch --export=ALL HelloUser.sh` ne renvoient pas ce que je souhaite.  
-Pour "passer" cette variable à mon script et lancer le script avec cette nouvelle variable, je dois écrire:  
+dans ce cas les différentes commandes `./HelloUser.sh` ou bien `sbatch HelloUser.sh` ou encore `sbatch --export=ALL HelloUser.sh` ne renvoient pas ce que l'on souhaite.  
+Pour que le script "hérite" de cette variable, soit il faut exporter la variable, soit on peut écrire:  
 
 ```bash
 MONNOM="John DOE" ./HelloUser.sh`  
 ```
 
-Et avec sbatch, j'écrirai:
+Et avec sbatch :
 
 ```bash
 sbatch --export=MONNOM="John DOE" HelloUser.sh
 ```
 
-Un autre exemple avec 2 variables:  
+Un autre exemple avec 2 variables :  
 
 ```bash
 #Création du script:
@@ -173,29 +289,66 @@ sbatch --export=PRENOM="John",NOM="DOE" HelloUser.sh
 ```
 
 
-Lorsqu'un job est lancé, [slurm](https://slurm.schedmd.com/) créé un certains nombres de variables qui commencent toutes par `SLURM_` et que nous pouvons utiliser dans nos scripts. Il n'est pas nécessaire des les exporter explicitement avec `--export=`, elles sont toujours exportées.    
+Lorsqu'un job est lancé, [slurm](https://slurm.schedmd.com/) créé un certain nombre de variables qui commencent toutes par `SLURM_` et que nous pouvons utiliser dans nos scripts. Il n'est pas nécessaire des les exporter explicitement avec `--export=` car elles sont toujours exportées. 
+
 Quelques variables qui peuvent être utiles:  
 
   - `SLURM_JOB_ID` contient le `<job_id>` qui a été assigné à notre job.  
   - `SLURM_CPUS_PER_TASK` contient le nombre de CPU alloué à chaque tâche et réglé à l'aide de l'option `--cpus-per-task=`  
   - `SLURM_ARRAY_TASK_ID` contient l'index ou ID du job array (voir ci-dessous)  
-  
-
-
 
 
 <br>
-
-Il est 
-
-
-<br>
-
-## Incorporer les resources dans son script      
 
 ## Les jobs arrays    
 
-# Suivi des jobs  
+> Paragraphe concernant une utilisation avancée
+
+En utilisant un unique script, il est possible de lancer plusieurs jobs via un **job array**.  Le job initial porte un identifiant ou `<job_id>` et les sous-jobs portent un indice ou `<array_index>`.  
+
+Pour cela, on utilisera avec `sbatch` l'option:  
+
+  - `-a` ou bien `--array=<indices>`.  
+  Les `<indices>` peuvent être indiqué via une liste de valeurs séparées par des virgules ou bien via un intervale de valeurs. Par exemple: `--array=0-3` est équivalent à `--array=0,1,2,3`.  
+  On peut également combiner ces deux manières de spécifier les indices: `--array=1,3,5-8`.  
+  Il est également possible de spécifier un pas entre les valeurs d'un intervalle. Ainsi `--array=0-15:4` est équivalent à `--array=0,4,8,12`.  
+  On peut également spécifier un nombre maximum de tâches issues du job array qui peuvent tourner en même temps. Ainsi `--array=0-15%4` ne lancera au maximum que 4 jobs à la fois.
+
+Souvent, on utilisera les **job array** avec des **variables arrays** unix.  
+
+Exemple:
+```bash
+#!/bin/bash
+#SBATCH --time=00:00:30
+#SBATCH --output=HelloWho_%A_%a.out
+#SBATCH --error=HelloWho_%A_%a.out
+#SBATCH --mem=100K
+#SBATCH --array=0-3
+
+#Un array de noms:
+NAMES=("Sam" "John" "Josh" "Will")
+
+#On utilise la variable SLURM qui renvoie l'indice de l'array afin de récupérer le nom correspondant
+echo Hello "${NAMES[$SLURM_ARRAY_TASK_ID]}"
+```
+
+Si on place ce script dans un fichier texte nommé `HelloWho.sh` auquel on donne les droits d'exécution, on peut lancer ce script avec `sbatch HelloWho.sh`  
+Chaque fichier de sortie correspondra à un nom de l'array `NAMES`  
+
+<br>
+
+
+# Suivi des jobs et des ressources
+
+`scontrol show config`
+
+`sinfo` pour montrer les noeuds, les partitions, les réservations  
+`squeue` pour montrer les jobs et leur état  
+`sacct` info sur le compte  
+`scontrol show`: info sur les jobs, noeuds, partitions  
+`sstat`: statut des jobs en cours d'exécution  
+`scancel` pour annuler un/des job(s)  
+
 
 
 
