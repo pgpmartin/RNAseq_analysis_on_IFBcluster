@@ -162,6 +162,15 @@ sbatch --job-name="HelloWorld" HelloWorld.sh
 sbatch --mem=100K HelloWorld.sh
 ```
 
+  - `-p` ou bien `--partition=<partition_names>`. Sur certains systèmes, il existe plusieurs partitions, c'est à dire des regroupements de noeuds de calculs possédant leurs propres quotas en terme de durée maximum, nombre de coeurs, mémoire, etc. La commande `sinfo` permet de voir quelles partitions existent sur le système. Il existe une partition par défaut dont le nom est suivie du signe `*`.
+
+```bash
+#Un job lancé sur la partition fast 
+sbatch --partition=fast HelloWorld.sh
+# "fast"" étant la partition par défaut sur l'IFBcore, cela revient à :
+sbatch HelloWorld.sh
+```
+
 
   - `--mail-type=<type>` pour contrôler quand un e-mail doit être envoyé à l'utilisateur. Les valeurs possibles de `<type>` sont `NONE`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ALL` et peuvent être combinées en les séparant par une virgule.  
   - `--mail-user=<user>` l'adresse à laquelle envoyer les e-mails (par défaut l'adresse fournie par l'utilisateur lors de son inscription)
@@ -192,7 +201,7 @@ Dans certains cas, un programme peut utiliser plusieurs processeurs (calcul para
   - `-n` ou bien `--ntasks=<number>`  pour spécifier le nombre de tâches lancées en parallèle par le script.
 
 D'autres explications sur la soumission de jobs parallèles sont disponibles [ici](https://kb.iu.edu/d/awrz).   
-Nous nous contenterons en général d'utiliser des scripts qui ne lance qu'une seule tâche ou bien des tâches successives et non parallèles. Mais certains programmes pourront utiliser plusieurs processeurs, nous utiliserons donc essentiellement l'option `--cpus-per-task=<ncpus>`.  
+Nous nous contenterons en général d'utiliser des scripts qui ne lancent qu'une seule tâche ou bien des tâches successives et non parallèles. Mais certains programmes pourront utiliser plusieurs processeurs, nous utiliserons donc essentiellement l'option `--cpus-per-task=<ncpus>`.  
 
 
 ```bash
@@ -340,15 +349,72 @@ Chaque fichier de sortie correspondra à un nom de l'array `NAMES`
 
 # Suivi des jobs et des ressources
 
-`scontrol show config`
+Ces fonctions permettent de consulter les ressources disponibles, de suivre l'exécution d'un job ou d'annuler un job.  
 
-`sinfo` pour montrer les noeuds, les partitions, les réservations  
-`squeue` pour montrer les jobs et leur état  
-`sacct` info sur le compte  
-`scontrol show`: info sur les jobs, noeuds, partitions  
-`sstat`: statut des jobs en cours d'exécution  
-`scancel` pour annuler un/des job(s)  
+### Vérifier les resources disponibles
+
+  - [`sinfo`](https://slurm.schedmd.com/sinfo.html) pour des infos sur les différentes partitions.
+
+```bash
+#info détaillées sur la partition bigmem
+sinfo --long --partition="bigmem"
+```
+
+  - [`scontrol`](https://slurm.schedmd.com/scontrol.html) pour des infos détaillées (et un contrôle pour les administrateurs du système) sur les noeuds, les partitions, les jobs ou la configuration.
+
+```bash
+#info détaillées sur un job précis
+scontrol show job="1051270"
+# infos détaillées sur la partition bigmem
+scontrol show partition="bigmem"
+#info détaillées sur la configuration
+scontrol show config
+```
+
+  - [`sacct`](https://slurm.schedmd.com/sacct.html) pour des infos sur votre compte et les jobs qui y sont associés. En particulier, cette fonction peut fournir des infos sur les ressources utilisées par les jobs (voir aussi ce [post](https://stackoverflow.com/questions/24020420/find-out-the-cpu-time-and-memory-usage-of-a-slurm-job)).
+
+```bash
+#combien mon job a utilié de temps CPU et de mémoire?
+sacct --format="JobID,JobName,CPUTime,MaxRSS"  --jobs="20811551"
+```
 
 
+### Suivre son job ou l'annuler
+
+> [`squeue`](https://slurm.schedmd.com/squeue.html) et [`scancel`](https://slurm.schedmd.com/scancel.html) sont sans doute les commandes que vous utiliserez le plus
 
 
+  - [`squeue`](https://slurm.schedmd.com/squeue.html) pour voir tous les jobs actuellement soumis sur le système.  
+  Pour suivre vos propres jobs et non ceux de tous les utilisateurs, vous utiliserez :
+
+```bash
+# Mes jobs soumis:
+squeue -u <username>
+```
+
+  Le champ `ST` indique le status du job. Le plus souvent il prend la valeur `PD` pour *pending* (= en attente) ou bien `R` pour *running*.  
+  Le champ `NODELIST(REASON)` indique sur quel noeud le job a été lancé ou bien la raison pour laquelle le job est en attente.
+
+
+  - [`scancel`](https://slurm.schedmd.com/scancel.html) pour annuler un job, qu'il soit en attente ou en cours d'exécution.
+
+```bash
+# Annuler le job 1051307
+scancel 1051307
+# s'il s'agit d'un job array tous les jobs 1051307_* seront arrêtés
+# pour en arrêter un seul (ici: 1051307_2):
+scancel 1051307_2
+```
+
+
+  - [`sstat`](https://slurm.schedmd.com/sstat.html) fourni des infos détaillés sur un job en cours d'exécution. Cette commande est à utiliser avec parcimonie car elle peut consommer des ressources.
+
+```bash
+# détail de mon jobs (soumis avec sbatch) en cours d'exécution:
+# "1051307.batch" est "l'étape" du job "1051307" où sont collectées les données car le job a été soumis avec sbatch et non avec srun
+sstat --jobs="1051307.batch" 
+# juste une partie des infos
+sstat --format="JobID,AveRSS,AveCPU" --jobs="1051307.batch"
+```
+
+<br>

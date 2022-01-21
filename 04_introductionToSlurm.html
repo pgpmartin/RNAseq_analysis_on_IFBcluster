@@ -274,6 +274,13 @@ sbatch --job-name=&quot;HelloWorld&quot; HelloWorld.sh</code></pre>
 <pre class="bash"><code>#Un job utilisant 100K de mémoire:
 sbatch --mem=100K HelloWorld.sh</code></pre>
 <ul>
+<li><code>-p</code> ou bien <code>--partition=&lt;partition_names&gt;</code>. Sur certains systèmes, il existe plusieurs partitions, c’est à dire des regroupements de noeuds de calculs possédant leurs propres quotas en terme de durée maximum, nombre de coeurs, mémoire, etc. La commande <code>sinfo</code> permet de voir quelles partitions existent sur le système. Il existe une partition par défaut dont le nom est suivie du signe <code>*</code>.</li>
+</ul>
+<pre class="bash"><code>#Un job lancé sur la partition fast 
+sbatch --partition=fast HelloWorld.sh
+# &quot;fast&quot;&quot; étant la partition par défaut sur l&#39;IFBcore, cela revient à :
+sbatch HelloWorld.sh</code></pre>
+<ul>
 <li><code>--mail-type=&lt;type&gt;</code> pour contrôler quand un e-mail doit être envoyé à l’utilisateur. Les valeurs possibles de <code>&lt;type&gt;</code> sont <code>NONE</code>, <code>BEGIN</code>, <code>END</code>, <code>FAIL</code>, <code>REQUEUE</code>, <code>ALL</code> et peuvent être combinées en les séparant par une virgule.<br />
 </li>
 <li><code>--mail-user=&lt;user&gt;</code> l’adresse à laquelle envoyer les e-mails (par défaut l’adresse fournie par l’utilisateur lors de son inscription)</li>
@@ -298,7 +305,7 @@ sbatch --wrap &quot;Rscript monScript.R&quot;</code></pre>
 <li><code>-n</code> ou bien <code>--ntasks=&lt;number&gt;</code> pour spécifier le nombre de tâches lancées en parallèle par le script.</li>
 </ul>
 <p>D’autres explications sur la soumission de jobs parallèles sont disponibles <a href="https://kb.iu.edu/d/awrz">ici</a>.<br />
-Nous nous contenterons en général d’utiliser des scripts qui ne lance qu’une seule tâche ou bien des tâches successives et non parallèles. Mais certains programmes pourront utiliser plusieurs processeurs, nous utiliserons donc essentiellement l’option <code>--cpus-per-task=&lt;ncpus&gt;</code>.</p>
+Nous nous contenterons en général d’utiliser des scripts qui ne lancent qu’une seule tâche ou bien des tâches successives et non parallèles. Mais certains programmes pourront utiliser plusieurs processeurs, nous utiliserons donc essentiellement l’option <code>--cpus-per-task=&lt;ncpus&gt;</code>.</p>
 <pre class="bash"><code>#Un job demandant 2 processeur (mais n&#39;en utilisant qu&#39;un en pratique...):
 sbatch --cpus-per-task=2 HelloWorld.sh</code></pre>
 <p>Toutes ces options peuvent bien sûr être combinées, rendant parfois les commandes <code>sbatch</code> assez touffues:</p>
@@ -403,13 +410,60 @@ Chaque fichier de sortie correspondra à un nom de l’array <code>NAMES</code><
 </div>
 <div id="suivi-des-jobs-et-des-ressources" class="section level1">
 <h1>Suivi des jobs et des ressources</h1>
-<p><code>scontrol show config</code></p>
-<p><code>sinfo</code> pour montrer les noeuds, les partitions, les réservations<br />
-<code>squeue</code> pour montrer les jobs et leur état<br />
-<code>sacct</code> info sur le compte<br />
-<code>scontrol show</code>: info sur les jobs, noeuds, partitions<br />
-<code>sstat</code>: statut des jobs en cours d’exécution<br />
-<code>scancel</code> pour annuler un/des job(s)</p>
+<p>Ces fonctions permettent de consulter les ressources disponibles, de suivre l’exécution d’un job ou d’annuler un job.</p>
+<div id="vérifier-les-resources-disponibles" class="section level3">
+<h3>Vérifier les resources disponibles</h3>
+<ul>
+<li><a href="https://slurm.schedmd.com/sinfo.html"><code>sinfo</code></a> pour des infos sur les différentes partitions.</li>
+</ul>
+<pre class="bash"><code>#info détaillées sur la partition bigmem
+sinfo --long --partition=&quot;bigmem&quot;</code></pre>
+<ul>
+<li><a href="https://slurm.schedmd.com/scontrol.html"><code>scontrol</code></a> pour des infos détaillées (et un contrôle pour les administrateurs du système) sur les noeuds, les partitions, les jobs ou la configuration.</li>
+</ul>
+<pre class="bash"><code>#info détaillées sur un job précis
+scontrol show job=&quot;1051270&quot;
+# infos détaillées sur la partition bigmem
+scontrol show partition=&quot;bigmem&quot;
+#info détaillées sur la configuration
+scontrol show config</code></pre>
+<ul>
+<li><a href="https://slurm.schedmd.com/sacct.html"><code>sacct</code></a> pour des infos sur votre compte et les jobs qui y sont associés. En particulier, cette fonction peut fournir des infos sur les ressources utilisées par les jobs (voir aussi ce <a href="https://stackoverflow.com/questions/24020420/find-out-the-cpu-time-and-memory-usage-of-a-slurm-job">post</a>).</li>
+</ul>
+<pre class="bash"><code>#combien mon job a utilié de temps CPU et de mémoire?
+sacct --format=&quot;JobID,JobName,CPUTime,MaxRSS&quot;  --jobs=&quot;20811551&quot;</code></pre>
+</div>
+<div id="suivre-son-job-ou-lannuler" class="section level3">
+<h3>Suivre son job ou l’annuler</h3>
+<blockquote>
+<p><a href="https://slurm.schedmd.com/squeue.html"><code>squeue</code></a> et <a href="https://slurm.schedmd.com/scancel.html"><code>scancel</code></a> sont sans doute les commandes que vous utiliserez le plus</p>
+</blockquote>
+<ul>
+<li><a href="https://slurm.schedmd.com/squeue.html"><code>squeue</code></a> pour voir tous les jobs actuellement soumis sur le système.<br />
+Pour suivre vos propres jobs et non ceux de tous les utilisateurs, vous utiliserez :</li>
+</ul>
+<pre class="bash"><code># Mes jobs soumis:
+squeue -u &lt;username&gt;</code></pre>
+<p>Le champ <code>ST</code> indique le status du job. Le plus souvent il prend la valeur <code>PD</code> pour <em>pending</em> (= en attente) ou bien <code>R</code> pour <em>running</em>.<br />
+Le champ <code>NODELIST(REASON)</code> indique sur quel noeud le job a été lancé ou bien la raison pour laquelle le job est en attente.</p>
+<ul>
+<li><a href="https://slurm.schedmd.com/scancel.html"><code>scancel</code></a> pour annuler un job, qu’il soit en attente ou en cours d’exécution.</li>
+</ul>
+<pre class="bash"><code># Annuler le job 1051307
+scancel 1051307
+# s&#39;il s&#39;agit d&#39;un job array tous les jobs 1051307_* seront arrêtés
+# pour en arrêter un seul (ici: 1051307_2):
+scancel 1051307_2</code></pre>
+<ul>
+<li><a href="https://slurm.schedmd.com/sstat.html"><code>sstat</code></a> fourni des infos détaillés sur un job en cours d’exécution. Cette commande est à utiliser avec parcimonie car elle peut consommer des ressources.</li>
+</ul>
+<pre class="bash"><code># détail de mon jobs (soumis avec sbatch) en cours d&#39;exécution:
+# &quot;1051307.batch&quot; est &quot;l&#39;étape&quot; du job &quot;1051307&quot; où sont collectées les données car le job a été soumis avec sbatch et non avec srun
+sstat --jobs=&quot;1051307.batch&quot; 
+# juste une partie des infos
+sstat --format=&quot;JobID,AveRSS,AveCPU&quot; --jobs=&quot;1051307.batch&quot;</code></pre>
+<p><br></p>
+</div>
 </div>
 
 
