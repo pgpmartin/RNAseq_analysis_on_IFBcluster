@@ -3,4 +3,4 @@
 *.docx
 .Rproj.user/
 img/*.odp
-
+results/
