@@ -316,6 +316,21 @@ multiqc \
 où le `<dossier_à_analyser>` est celui contenant les résultats de la commande `fastqc`
 
 
+## Alignement: [STAR](https://github.com/alexdobin/STAR)  
+
+
+## Comptage: [featurecounts](http://subread.sourceforge.net/)  
+
+
+## Analyse différentielle: [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html)  
+
+
+## Enrichissement de catégories fonctionnelles  
+
+
+## Heatmaps  
+
+
 
 
 
