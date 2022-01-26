@@ -46,7 +46,7 @@ L'**European Nucleotide Archive** ([ENA](https://www.ebi.ac.uk/ena)) stocke une 
 ### Préparation des dossiers pour les analyses
 
 #### Dossiers utilisés:
-On commence par préparer les dossiers dans lesquels les analyses seront effectuée.  
+On commence par préparer les dossiers dans lesquels les analyses seront effectuées.  
 Notre dossier partagé pour la formation est :
 
 ```bash
@@ -157,6 +157,7 @@ gunzip $datadir/*.fastq.gz
 
 *Il n'est pas toujours obligatoire de décompresser les fichiers de données brutes. De nombreux outils acceptent directement les fichiers compressés*
 
+<br>
 
 ## Génome, annotations et indexage
 
@@ -225,14 +226,27 @@ module load samtools/1.14
 samtools faidx TAIR10.fa
 ```
 
-L'index créé donne juste la taille de chaque chromosome:
+L'index créé donne :
+
+  - Colonne 1 : le nom du **chromosome** (ou contig)
+  - Colonne 2 : le **nombre de bases** dans le chromsome
+  - Colonne 3 : l'**index** du byte dans le fichier où la séquence de ce chromosome commence
+  - Colonne 4 : le nombre de **bases** par ligne dans le fichier fasta
+  - Colonne 5 : le nombre de **bytes** par lignes dans le fichier fasta
+
 ```bash
 cat TAIR10.fa.fai
 ```
 
+Nous aurons également besoin d'un fichier contenant juste la taille des chromsomes. Nous pouvons l'extraire ainsi:
+
+```bash
+cut -f 1,2 TAIR10.fa.fai > TAIR10_chrom.sizes
+```
+
 ### Annotations
 
-Téléchargement des annotations:
+Téléchargement des annotations au format gff:
 
 ```bash
 cd $bankdir
@@ -244,6 +258,16 @@ Observation du fichier d'annotation:
 ```bash
 head TAIR10_GFF3_genes.gff
 ```
+
+Nous aurons également besoin d'un fichier gtf pour le comptage.  
+On le produit à partir du fichier gff en utilisant le logiciel `gffread` du package `cufflinks`
+
+```bash
+cd $bankdir
+module load cufflinks/2.2.1
+gffread TAIR10_GFF3_genes.gff -T -o TAIR10_GTF_genes.gtf
+```
+
 
 ### Index pour STAR
 
@@ -278,6 +302,8 @@ Le script `scripts/01_a_STARindex.sh` permet de lancer cette commande sur le clu
 sbatch ${scriptdir}/01_a_STARindex.sh
 ```
 
+<br>
+
 ## QC sur les données brutes: [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) et [multiqc](https://multiqc.info/docs/)  
 
 Le logiciel [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) fournit des contrôles qualités utiles pour évaluer la qualité des reads obtenus.  
@@ -304,7 +330,7 @@ Une fois que les jobs précédents sont terminés, on peut lancer `scripts/02_b_
 sbatch ${scriptdir}/02_b_MultiQC.sh
 ```
 
-la commande pour multiqc est également très simple:
+la commande pour multiqc est également très simple :
 
 ```bash
 multiqc \
@@ -315,11 +341,189 @@ multiqc \
 
 où le `<dossier_à_analyser>` est celui contenant les résultats de la commande `fastqc`
 
+<br>
 
 ## Alignement: [STAR](https://github.com/alexdobin/STAR)  
 
+En général, les données de RNA-seq polyA+ ne nécessitent pas d'être "rognés" (*trimming* en anglais) en éliminant des extrémités de séquences qui correspondent à des bases de faile qualité ou à des séquences adaptatirces.  
+Si un jour vous contatez la présence de ce type de problème, vous pourrez utiliser des ouils dédiés comme [cutadapt](https://cutadapt.readthedocs.io/en/stable/guide.html) ou bien [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) par exemple.    
+  
+Les reads sont alignés avec le logiciel [STAR](https://github.com/alexdobin/STAR) dont la [documentation](https://raw.githubusercontent.com/alexdobin/STAR/master/doc/STARmanual.pdf) est disponible en ligne.  
+Il existe d'autres logiciels pour effectuer cet alignement comme [HiSAT2](https://daehwankimlab.github.io/hisat2/) [@pmid25751142; @pmid27560171; @pmid31375807] ou bien [Subread](http://subread.sourceforge.net/) [@pmid23558742; @pmid30783653] par exemple.  
+
+Le script `scripts/03_a_STAR_pe.sh` permet de lancer l'alignement sur le cluster de calcul  :  
+
+```bash
+sbatch ${scriptdir}/03_a_STAR_pe.sh
+```
+
+Exemple de commande STAR pour des reads appariés:  
+
+```bash
+module load star/2.7.9a
+
+  STAR \
+  --runMode alignReads \
+  --runThreadN <nombre_de_cpu> \
+  --genomeDir <chemin/de/star_index> \
+  --readFilesIn <fastq_file_R1> <fastq_file_R2> \
+  --outFileNamePrefix <output_directory/SampleName_> \
+  --outSAMtype BAM SortedByCoordinate \
+  --outWigType bedGraph \
+;
+```
+
+Cette commande permet :  
+
+  1. d'aligner les reads sur le génome
+  2. convertir le fichier dans un format binaire (`BAM`)
+  3. trier le fichier par coordonnées génomiques des reads (`SortedByCoordinate`)
+  4. produire des fichiers de "signaux" ou *tracks* au format [`bedGraph`](https://genome.ucsc.edu/goldenPath/help/bedgraph.html)
+
+
+Les logiciels d'alignement produisent généralement des fichiers au format [SAM](https://fr.wikipedia.org/wiki/SAM_(format_de_fichier)). Voir les [spécifications complètes](https://samtools.github.io/hts-specs/SAMv1.pdf).  
+Ces fichiers contiennent une ligne pour chaque read :
+
+![](img/SamFormat.png)
+
+Un fichier SAM est un fichier texte classique, dont le contenu peut être affiché à l'écran (du moins quelques lignes...) à l'aide par exemple de la commande unix `head`.  
+Le format [BAM](https://fr.wikipedia.org/wiki/Binary_Alignment_Map) est une compression du format **SAM** sous un format binaire. Un fichier BAM ne peut donc pas être directement affiché à l'écran en utilisant les commandes unix classiques (ex: `more`, `head`, `tail`, etc.).  
+
+La suite de logiciels [samtools](http://www.htslib.org/) fournit un ensemble d'outils pour manipuler des fichiers **SAM**/**BAM** (visualisation, tri, fusion, conversion, statistiques, etc.). Elle comprend de nombreuses [fonctions](http://www.htslib.org/doc/samtools.html) qu'il est utile d'explorer.  
+
+Ici, on utilise [samtools](http://www.htslib.org/) :
+
+  - pour indexer les fichiers **BAM** :  
+
+  ```bash
+  samtools index <input_bam_file>
+  ```
+
+  - pour filtrer le fichier **BAM** issu de **STAR** en éliminant certains reads correspondant à des alignements de faible qualité. Un code binaire est utilisé (colonne **Flag**) pour indiquer plusieurs caractéristiques de chaque read/alignement. On pourra décoder ce code [ici](https://broadinstitute.github.io/picard/explain-flags.html)
+
+  ```bash
+  module load samtools/1.14
+
+  # -F reads à éliminer
+  # -f reads à garder
+  # -q éliminer les reads dont la qualité est inférieure à une certaine valeur
+  
+  samtools view \
+    -bh \
+    -f 3 \
+    -F 780 \
+    -q 10 \
+    <input_bam_file> \
+    > \
+    <output_bam_file>
+  ```
+
+  - pour trier un fichier bam :   
+
+  ```bash
+  samtools sort -o <output_bam_file> <input_bam_file>
+  ```
+
+  - pour compter le nombre de reads dans un fichier **BAM** :
+  
+  ```bash
+  samtools view -c <input_bam_file>
+  ```
+
+<br>
+
+## Fichier signal / tracks: bedgraph et bigwig
+
+Il est important de pouvoir visualiser les résultats d'une expérience sur un [genome browser](https://en.wikipedia.org/wiki/Genome_browser) qui permet de faire défiler le génome et d'observer ce qui se rapproche le plus des données brutes. Il est possible d'y explorer plusieurs représentations ou fichiers que l'on appelle des *tracks* en anglais.  
+
+Il existe différents genome browser comme [IGV](https://software.broadinstitute.org/software/igv/), [GBrowse](http://gmod.org/wiki/Gbrowse) ou bien [jbrowse](https://jbrowse.org/jb2/).  
+
+Les reads issus d'un fichier **SAM**/**BAM** peuvent être visualisés directement sur un [genome browser](https://en.wikipedia.org/wiki/Genome_browser) (après avoir indexé le fichier) mais cette représentation n'est pas toujours la plus appropriée.  
+
+Un autre angle de vue consiste à compter pour chaque base du génome (ou pour une fenêtre de petite taille comme par exemple 10bp) combien de reads s'alignent sur cette base. Les données se résument donc à un **signal** le long du génome.   
+
+Les données sont typiquement stockées sous la forme de 4 colonnes, comme dans le fichier de type [`bedGraph`](https://genome.ucsc.edu/goldenPath/help/bedgraph.html) produit par STAR:
+
+```
+chromosome    start    end    signal
+```
+
+Le format [`wig`](https://genome.ucsc.edu/goldenpath/help/wiggle.html) ou sa version compressée en binaire [`bigwig`](https://genome.ucsc.edu/goldenpath/help/bigWig.html) sont d'autres formats pour stocker le même type de données.  
+
+On peut convertir de bedgraph en bigwig en utilisant:  
+
+```bash
+module load ucsc-bedgraphtobigwig/377
+
+bedGraphToBigWig <input_bedgraph> <chrom.sizes> <output_bigwig>
+```
+
+où `<chrom.sizes>` est un fichier texte contenant 2 colonnes: le nom et la taille de chaque chromosome.
+
+Le script `scripts/04_a_bedgraph2bigwig.sh` permet de lancer sur le cluster la conversion pour tous les fichiers  :  
+
+```bash
+sbatch ${scriptdir}/04_a_bedgraph2bigwig.sh
+```
+<br>
+
+Le logiciel [bamscale](https://github.com/ncbi/BAMscale) [@pmid32321568] permet également de générer des *tracks* directement au format bigwig à partir d'un fichier **BAM** :
+
+```bash
+BAMscale scale \
+  --operation strandrna \
+  --keepdup yes \
+  --outdir <outpu_directory> \
+  --bam <input_bam_file> \
+```
+
+Le script `scripts/04_b_bamscale_filteredReads.sh` permet de générer sur le cluster des bigwig pour tous les fichiers  :  
+
+```bash
+sbatch ${scriptdir}/04_b_bamscale_filteredReads.sh
+```
+
+<br>
 
 ## Comptage: [featurecounts](http://subread.sourceforge.net/)  
+
+L'étape suivante consiste à compter le nombre de reads qui s'alignent correctement sur les gènes annotés.  
+L'un des premiers outils développé, toujours populaire, est [HTseq](https://github.com/htseq/htseq).  
+Ici, nous utiliserons [featureCounts](http://subread.sourceforge.net/) qui fait partie du package [subread](http://subread.sourceforge.net/) et est aussi accessible dans R via le package [Rsubread](http://bioconductor.org/packages/release/bioc/html/Rsubread.html).
+
+Si l'opération peut sembler triviale il existe en réalité de nombreux choix à faire pour faire ce comptage. Certains sont très bien illustrés par cette figure issue de la [documentation](https://htseq.readthedocs.io/) de HTseq :
+
+![](img/htseq_count_modes.png)
+
+Pour utiliser `featureCounts`, on utilisera une commande de ce type :  
+
+```bash
+featureCounts \
+   -a <chemin_vers_fichier_GTF> \
+   -G <chemin_vers_fichier_FASTA> \
+   -p \
+   -s 2 \
+   -B \
+   -C \
+   -o <chemin_vers_fichier_sortie> \
+ <input_bam_file>
+```
+
+Les arguments utilisés ici sont :
+
+  - `-a` et `-G` permettent d'entrer les annotations et l'assemblage.  
+  - `-p` précise qu'il s'agit de reads appariés  
+  - `-s` précise l'orientation attendue des reads (fonction du protocole utilisé pour faire la librairie)
+  - `-B` et `-C` permettent de filtrer certains reads dont le mapping est incertain
+  - `-o` indique le chemin et le nom du fichier de sortie
+
+Le script `scripts/05_a_featurecounts.sh` permet de lancer sur le cluster le comptage pour tous les fichiers  :  
+
+```bash
+sbatch ${scriptdir}/05_a_featurecounts.sh
+```
+
+<br>
 
 
 ## Analyse différentielle: [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html)  

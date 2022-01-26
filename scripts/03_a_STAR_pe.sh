@@ -4,7 +4,7 @@
 #SBATCH --output=/shared/projects/form_2022_07/TD_RNAseq/log/03_a_STAR_pe_%A_%a.out
 #SBATCH --error=/shared/projects/form_2022_07/TD_RNAseq/log/03_a_STAR_pe_%A_%a.err
 #SBATCH --array=0-5
-#SBATCH --time=12:00:00
+#SBATCH --time=04:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=8G
