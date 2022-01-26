@@ -8,12 +8,17 @@ Matériel pédagogique pour l'UE **NGS application** du master [B2AS](https://ww
 
 
 # Créer votre compte sur la plateforme IFB core
-01_CreationCompteIFBcore  
+01\_CreationCompteIFBcore  
 
 # Installer les outils nécessaires pour interagir avec la plateforme IFB core
-02_InteractWithIFBcore  
+02\_InteractWithIFBcore  
 
 # Quelques commandes Unix de base
-03_UnixCommands  
+03\_UnixCommands  
 
+# Lancer des jobs sur le cluster: SLURM
+04\_introductionToSlurm  
+
+# Analyser des données RNAseq
+05\_RNAseq\_analysis\_GSE112441  
 
