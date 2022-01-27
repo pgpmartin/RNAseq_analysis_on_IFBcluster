@@ -627,13 +627,132 @@ Ici, nous utiliserons <a href="http://subread.sourceforge.net/">featureCounts</a
 </ul>
 <p>Le script <code>scripts/05_a_featurecounts.sh</code> permet de lancer sur le cluster le comptage pour tous les fichiers :</p>
 <pre class="bash"><code>sbatch ${scriptdir}/05_a_featurecounts.sh</code></pre>
+<p><strong>Préparation de la table des comptages <code>countMatrix</code></strong><br />
+Ensuite, on assemble sous <code>R</code> les différents fichiers dans un unique tableau contenant les gènes en ligne et les échantillons en colonne.<br />
+Ces commandes utilisant très peu de ressources peuvent être lancées sur le serveur frontal :</p>
+<pre class="r"><code>#Queques commandes Unix pour commencer:
+# module load r/4.1.1
+# mkdir -p ${workdir}/results/RData
+# R
+
+# définir le répertoire de travail:
+projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/fcount&quot; 
+setwd(projPath)
+
+#lister les fichiers de comptage:
+fn &lt;- dir(projPath, pattern=&quot;fcount$&quot;)
+
+#Nom des échantillons:
+sn &lt;- gsub(&quot;_filtered.fcount&quot;, &quot;&quot;, fn)
+sn &lt;- gsub(&quot;GSE112441_&quot;, &quot;&quot;, sn)
+
+#Importation du premier fichier
+fileREF &lt;- readr::read_tsv(file.path(projPath, fn[1]), skip=1)
+
+#Nom des gènes
+gnn &lt;- fileREF$Geneid
+
+#Création d&#39;une table contenant une colonne avec le nom des gènes
+ctgn &lt;- tibble::tibble(GeneName = gnn)
+
+#Ajout des différents échantillons à cette table
+for (i in 1:length(sn))
+{
+    ctt &lt;- readr::read_tsv(file.path(projPath, fn[i]), skip = 1)
+    stopifnot(identical(ctt$Geneid, gnn))
+    ctgn[,sn[i]] &lt;- ctt[,7]
+}
+
+# Nous n&#39;analyserons pas les gènes de la mitochondrie et du chloroplast. On peut donc les éliminer de la table:
+ctgn &lt;- ctgn[!grepl(&quot;^ATMG|^ATCG&quot;, ctgn$GeneName), ]
+
+#Nous éliminons également toutes les lignes qui n&#39;ont que des zéros:
+ctgn &lt;- ctgn[rowSums(ctgn[,-1]) &gt; 0, ]
+
+#Sauvegarde du fichier au format rds (binaire)
+saveRDS(ctgn, file.path(projPath, &quot;..&quot;, &quot;RData&quot;, &quot;countMatrix.rds&quot;))
+
+#Sauvegarde du fichier au format tsv (tab-separated value)
+write.table(ctgn, 
+            file.path(projPath, &quot;..&quot;, &quot;RData&quot;, &quot;countMatrix.tsv&quot;), 
+            sep=&quot;\t&quot;, dec=&quot;.&quot;, quote = FALSE)</code></pre>
 <p><br></p>
 </div>
 <div id="analyse-différentielle-deseq2" class="section level2">
 <h2>Analyse différentielle: <a href="http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html">DESeq2</a></h2>
+<p>L’analyse différentielle (i.e. l’identification des gènes différentiellement exprimés entre les individus <code>bdrs</code> et les individus <code>WT</code> est réalisée sous R) à l’aide du package <a href="http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html">DESeq2</a>.</p>
+<pre class="r"><code># srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+#autoriser plus de colonnes à s&#39;afficher
+options(width=160)
+
+# définir le répertoire de travail
+projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/RData&quot; 
+setwd(projPath)
+
+#charger les librairies
+library(DESeq2)
+library(dplyr)
+
+#importer la matrice de comptage
+ctgn &lt;- readRDS(&quot;countMatrix.rds&quot;)
+
+# Convertir le tableau ctgn en matrice où les noms des lignes sont les noms des gènes
+gnn &lt;- ctgn$GeneName
+ctgn &lt;- as.matrix(ctgn[,-1])
+rownames(ctgn) &lt;- gnn
+
+#Définir le facteur genotype
+genotype &lt;- factor(gsub(&quot;_rep[1-3]&quot;, &quot;&quot;, colnames(ctgn)))
+
+#Préparer un tableau contenant les infos sur les échantillons
+SampleData &lt;- S4Vectors::DataFrame(SampleName = colnames(ctgn),
+                                   genotype = genotype,
+                                  row.names = colnames(ctgn))
+
+#Créer un objet utilisable par DESeq2
+dds &lt;- DESeq2::DESeqDataSetFromMatrix(countData = ctgn,
+                                      colData = SampleData,
+                                      design = ~ genotype)
+
+#définir le niveau &quot;WT&quot; du facteur génotype comme la référence
+dds$genotype &lt;- relevel(dds$genotype, &quot;WT&quot;)
+
+#Lancer l&#39;analyse DESeq2
+dds &lt;- DESeq2::DESeq(dds)
+
+#Sauvegarder le résultat
+saveRDS(dds, &quot;DESeq2obj.rds&quot;)
+
+#Extraire la table de résultats:
+restab &lt;- DESeq2::results(dds, contrast=c(&quot;genotype&quot;, &quot;bdrs&quot;, &quot;WT&quot;))
+
+#Sauvegarder la table
+saveRDS(restab, &quot;DESeq2res.rds&quot;)
+
+#Combien de gènes différentiellement exprimé observe-t-on au seuil de FDR&lt;5% ?
+sum(restab$padj &lt; 0.05, na.rm=TRUE)
+
+#Combien de gènes uprégulés (i.e. exprimés plus fortement chez bdrs que chez WT) à ce seuil?
+sum(restab$padj &lt; 0.05 &amp; restab$log2FoldChange &gt; 0, na.rm=TRUE)
+
+#Combien de gènes downrégulés (i.e. exprimés plus faiblement chez bdrs que chez WT) à ce seuil?
+sum(restab$padj &lt; 0.05 &amp; restab$log2FoldChange &lt; 0, na.rm=TRUE)
+
+#Affichage des 10 premiers gènes uprégulés
+restab %&gt;%
+  as.data.frame() %&gt;%
+  dplyr::filter(padj &lt; 0.05, log2FoldChange &gt; 0) %&gt;% 
+  dplyr::arrange(padj) %&gt;%
+  dplyr::slice(1:10)</code></pre>
+<p>Pour la suite, nous nous focaliserons sur les gènes dit “<strong>uprégulés</strong>,” c’est à dire qui sont exprimés plus fortement chez les triples mutants <em>bdr1,2,3</em> (<code>bdrs</code>) par rapport au plantes contrôles (<code>WT</code>).</p>
 </div>
 <div id="enrichissement-de-catégories-fonctionnelles" class="section level2">
 <h2>Enrichissement de catégories fonctionnelles</h2>
+<p>Nous aimerions savoir si parmi les gènes <strong>uprégulés</strong> certaines fonctions biologiques sont sur-représentées.<br />
+Le test généralement utilisé pour évaluer cela est un <a href="https://fr.wikipedia.org/wiki/Test_exact_de_Fisher">test exact de Fisher</a> basé sur la <a href="https://fr.wikipedia.org/wiki/Loi_hyperg%C3%A9om%C3%A9trique">loi hypergéométrique</a>.</p>
 </div>
 <div id="heatmaps" class="section level2">
 <h2>Heatmaps</h2>

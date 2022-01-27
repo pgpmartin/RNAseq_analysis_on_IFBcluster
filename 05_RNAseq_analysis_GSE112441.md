@@ -705,13 +705,153 @@ cluster le comptage pour tous les fichiers :
 sbatch ${scriptdir}/05_a_featurecounts.sh
 ```
 
+**Préparation de la table des comptages `countMatrix`**  
+Ensuite, on assemble sous `R` les différents fichiers dans un unique
+tableau contenant les gènes en ligne et les échantillons en colonne.  
+Ces commandes utilisant très peu de ressources peuvent être lancées sur
+le serveur frontal :
+
+``` r
+#Queques commandes Unix pour commencer:
+# module load r/4.1.1
+# mkdir -p ${workdir}/results/RData
+# R
+
+# définir le répertoire de travail:
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/fcount" 
+setwd(projPath)
+
+#lister les fichiers de comptage:
+fn <- dir(projPath, pattern="fcount$")
+
+#Nom des échantillons:
+sn <- gsub("_filtered.fcount", "", fn)
+sn <- gsub("GSE112441_", "", sn)
+
+#Importation du premier fichier
+fileREF <- readr::read_tsv(file.path(projPath, fn[1]), skip=1)
+
+#Nom des gènes
+gnn <- fileREF$Geneid
+
+#Création d'une table contenant une colonne avec le nom des gènes
+ctgn <- tibble::tibble(GeneName = gnn)
+
+#Ajout des différents échantillons à cette table
+for (i in 1:length(sn))
+{
+    ctt <- readr::read_tsv(file.path(projPath, fn[i]), skip = 1)
+    stopifnot(identical(ctt$Geneid, gnn))
+    ctgn[,sn[i]] <- ctt[,7]
+}
+
+# Nous n'analyserons pas les gènes de la mitochondrie et du chloroplast. On peut donc les éliminer de la table:
+ctgn <- ctgn[!grepl("^ATMG|^ATCG", ctgn$GeneName), ]
+
+#Nous éliminons également toutes les lignes qui n'ont que des zéros:
+ctgn <- ctgn[rowSums(ctgn[,-1]) > 0, ]
+
+#Sauvegarde du fichier au format rds (binaire)
+saveRDS(ctgn, file.path(projPath, "..", "RData", "countMatrix.rds"))
+
+#Sauvegarde du fichier au format tsv (tab-separated value)
+write.table(ctgn, 
+            file.path(projPath, "..", "RData", "countMatrix.tsv"), 
+            sep="\t", dec=".", quote = FALSE)
+```
+
 <br>
 
 Analyse différentielle: [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html)
 ----------------------------------------------------------------------------------------------------
 
+L’analyse différentielle (i.e. l’identification des gènes
+différentiellement exprimés entre les individus `bdrs` et les individus
+`WT` est réalisée sous R) à l’aide du package
+[DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html).
+
+``` r
+# srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+#autoriser plus de colonnes à s'afficher
+options(width=160)
+
+# définir le répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
+#charger les librairies
+library(DESeq2)
+library(dplyr)
+
+#importer la matrice de comptage
+ctgn <- readRDS("countMatrix.rds")
+
+# Convertir le tableau ctgn en matrice où les noms des lignes sont les noms des gènes
+gnn <- ctgn$GeneName
+ctgn <- as.matrix(ctgn[,-1])
+rownames(ctgn) <- gnn
+
+#Définir le facteur genotype
+genotype <- factor(gsub("_rep[1-3]", "", colnames(ctgn)))
+
+#Préparer un tableau contenant les infos sur les échantillons
+SampleData <- S4Vectors::DataFrame(SampleName = colnames(ctgn),
+                                   genotype = genotype,
+                                  row.names = colnames(ctgn))
+
+#Créer un objet utilisable par DESeq2
+dds <- DESeq2::DESeqDataSetFromMatrix(countData = ctgn,
+                                      colData = SampleData,
+                                      design = ~ genotype)
+
+#définir le niveau "WT" du facteur génotype comme la référence
+dds$genotype <- relevel(dds$genotype, "WT")
+
+#Lancer l'analyse DESeq2
+dds <- DESeq2::DESeq(dds)
+
+#Sauvegarder le résultat
+saveRDS(dds, "DESeq2obj.rds")
+
+#Extraire la table de résultats:
+restab <- DESeq2::results(dds, contrast=c("genotype", "bdrs", "WT"))
+
+#Sauvegarder la table
+saveRDS(restab, "DESeq2res.rds")
+
+#Combien de gènes différentiellement exprimé observe-t-on au seuil de FDR<5% ?
+sum(restab$padj < 0.05, na.rm=TRUE)
+
+#Combien de gènes uprégulés (i.e. exprimés plus fortement chez bdrs que chez WT) à ce seuil?
+sum(restab$padj < 0.05 & restab$log2FoldChange > 0, na.rm=TRUE)
+
+#Combien de gènes downrégulés (i.e. exprimés plus faiblement chez bdrs que chez WT) à ce seuil?
+sum(restab$padj < 0.05 & restab$log2FoldChange < 0, na.rm=TRUE)
+
+#Affichage des 10 premiers gènes uprégulés
+restab %>%
+  as.data.frame() %>%
+  dplyr::filter(padj < 0.05, log2FoldChange > 0) %>% 
+  dplyr::arrange(padj) %>%
+  dplyr::slice(1:10)
+```
+
+Pour la suite, nous nous focaliserons sur les gènes dit “**uprégulés**”,
+c’est à dire qui sont exprimés plus fortement chez les triples mutants
+*bdr1,2,3* (`bdrs`) par rapport au plantes contrôles (`WT`).
+
 Enrichissement de catégories fonctionnelles
 -------------------------------------------
+
+Nous aimerions savoir si parmi les gènes **uprégulés** certaines
+fonctions biologiques sont sur-représentées.  
+Le test généralement utilisé pour évaluer cela est un [test exact de
+Fisher](https://fr.wikipedia.org/wiki/Test_exact_de_Fisher) basé sur la
+[loi
+hypergéométrique](https://fr.wikipedia.org/wiki/Loi_hyperg%C3%A9om%C3%A9trique).
 
 Heatmaps
 --------
