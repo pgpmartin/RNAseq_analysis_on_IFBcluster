@@ -7,6 +7,11 @@ work is licensed under a
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative
 Commons Attribution 4.0 International License</a>.
 
+Ce cours est un survol de l’analyse des données de RNA-seq. Il existe de
+nombreuses ressources en ligne pour aller plus loin. Voir par exemple ce
+[cours très
+complet](https://scienceparkstudygroup.github.io/rna-seq-lesson/).
+
 Données et mise en place
 ------------------------
 
@@ -843,18 +848,191 @@ Pour la suite, nous nous focaliserons sur les gènes dit “**uprégulés**”,
 c’est à dire qui sont exprimés plus fortement chez les triples mutants
 *bdr1,2,3* (`bdrs`) par rapport au plantes contrôles (`WT`).
 
+<br>
+
 Enrichissement de catégories fonctionnelles
 -------------------------------------------
 
 Nous aimerions savoir si parmi les gènes **uprégulés** certaines
 fonctions biologiques sont sur-représentées.  
-Le test généralement utilisé pour évaluer cela est un [test exact de
+Cela correspond à ce que l’on nomme souvent un **test d’enrichissement
+de catégories fonctionnelles**. Le test généralement utilisé pour
+évaluer cela est un [test exact de
 Fisher](https://fr.wikipedia.org/wiki/Test_exact_de_Fisher) basé sur la
 [loi
-hypergéométrique](https://fr.wikipedia.org/wiki/Loi_hyperg%C3%A9om%C3%A9trique).
+hypergéométrique](https://fr.wikipedia.org/wiki/Loi_hyperg%C3%A9om%C3%A9trique).  
+Il ne doit pas être confondu avec l’analyse d’enrichissement de sets de
+gènes (*Gene Set Enrichment Analysis* ou
+[GSEA](https://www.gsea-msigdb.org/gsea/index.jsp)) (Mootha et al.,
+2003; Subramanian et al., 2005) qui ne dépend pas d’un seuil défini a
+priori pour sélectionner des gènes différentiellement exprimés.
+
+Nous allons effectuer ces tests en utilisant la base de données [Gene
+Ontology](http://geneontology.org/) qui regroupe des annotations des
+gènes selon 3
+[ontologies](http://geneontology.org/docs/ontology-documentation/) :
+
+-   **Cellular Component** (CC) décrit la localisation subcellulaire des
+    produits des gènes.
+-   **Molecular Function** (MF) décrit l’activité au niveau moléculaire
+    des produits des gènes.
+-   **Biological Process** (BP) décrit les processus biologiques dans
+    lesquels sont impliqués les produits des gènes.
+
+Ici, nous nous focaliserons uniquement sur l’ontologie **Biological
+Process** mais il est intéressant d’explorer les autres ontologies,
+ainsi que d’autres sources d’annotation des gènes comme
+[KEGG](https://www.genome.jp/kegg/); [reactome](https://reactome.org/),
+[BioCyc](https://biocyc.org/), [BioGRID](https://thebiogrid.org/) et
+bien d’autres…
+
+Nous utiliserons le package `R`
+[clusterProfiler](http://www.bioconductor.org/packages/release/bioc/html/clusterProfiler.html)
+qui facilite ce genre d’analyse pour de nombreux organismes en
+s’appuyant sur les packages d’annotation `OrgDb` disponibles dans
+[Bioconductor](http://www.bioconductor.org/packages/release/BiocViews.html#___OrgDb).
+
+Pour effectuer un test exact de Fisher nous avons besoin:
+
+-   de l’ensemble des gènes testés, ce que l’on va appeler
+    “**l’univers**”
+-   de l’enseble des **gènes d’intérêt** : ici les gènes **uprégulés**
+-   des annotations pour tous les gènes, fournies ici par le package
+    [`org.At.tair.db`](http://www.bioconductor.org/packages/release/data/annotation/html/org.At.tair.db.html)
+
+``` r
+# srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+# définir le répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
+#autoriser plus de colonnes à s'afficher
+options(width=160)
+
+# chargement des packages
+library(clusterProfiler)
+library(org.At.tair.db)
+library(dplyr)
+
+# chargement de la table résultat
+restab <- readRDS("DESeq2res.rds")
+
+#noms des gènes d'intérêts (gènes uprégulés)
+upgn <- restab %>% 
+          as.data.frame() %>%
+          dplyr::filter(padj < 0.05 , log2FoldChange > 0) %>%
+          rownames
+
+#analyse de l'enrichement des annotations biological processes parmi les gènes uprégulés
+ego <- enrichGO(gene          = upgn,
+                universe      = rownames(restab),
+                keyType       = "TAIR",
+                OrgDb         = org.At.tair.db,
+                ont           = "BP",
+                pAdjustMethod = "BH",
+                pvalueCutoff  = 0.01,
+                qvalueCutoff  = 0.05,
+                readable      = TRUE)
+
+# L'objet créé est un objet S4. On accède à ses éléments à l'aide de '@'
+head(ego)
+slotNames(ego)
+head(ego@result)
+
+# Sauvegarde de l'objet
+saveRDS(ego, "EnrichGOBP_upregulatedGenes.rds")
+```
+
+Le package
+[clusterProfiler](http://www.bioconductor.org/packages/release/bioc/html/clusterProfiler.html)
+fournit plurieurs options de représentation graphique des résultats:
+
+``` r
+barplot(ego, showCategory = 10)
+```
+
+![](img/clusterProfiler_GOBP_upgn_barplot.png)
+
+``` r
+dotplot(ego, showCategory = 10)
+```
+
+![](img/clusterProfiler_GOBP_upgn_dotplot.png)
+
+Le package
+[simplifyEnrichment](https://github.com/jokergoo/simplifyEnrichment)
+propose également de simplifier les résulats d’une analyse
+d’enrichissement en étudiant comment les différentes annotations se
+regroupent sur un plan sémantique.
+
+``` r
+# Chargement du pakage
+library(simplifyEnrichment)
+# choix d'une graine arbitraire (pour la réproductibilité)
+set.seed(123)
+
+#récupération des annotations GO BP significatives (74 termes GO)
+go_id = ego@result %>% filter(p.adjust < 0.001) %>% pull(ID)
+
+#calcul des similarités entre termes GO BP
+mat = GO_similarity(go_id, ont="BP")
+
+# représentation graphique:
+simplifyGO(mat, method = "kmeans", control = list(max_k = 10))
+```
+
+![](img/clusterProfiler_GOBP_upgn_simplifyEnrichment.png)
+
+<br>
 
 Heatmaps
 --------
+
+``` r
+# srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+# définir le répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
+#autoriser plus de colonnes à s'afficher
+options(width=160)
+
+# chargement des packages
+library(DESeq2)
+library(EnrichedHeatmap)
+library(dplyr)
+
+# chargement de la table résultat
+dds <- readRDS("DESeq2obj.rds")
+
+#noms des gènes d'intérêts (régulés)
+goi <- restab %>% 
+          as.data.frame() %>%
+          dplyr::filter(padj < 0.05) %>%
+          rownames
+
+# Stabilisation de la variance via vst
+dds_vst <- vst(dds)
+
+# récupération des données normalisées dans un objet de type matrice
+vstmat <- assays(dds_vst)[[1]]
+
+# centrage réduction des lignes de la matrice
+vstmat_scr <- t(scale(t(vstmat)))
+
+#Représentation des gènes régulés sous forme de heatmap
+ComplexHeatmap::Heatmap(vstmat_scr[goi,],
+                        show_row_names = FALSE,
+                        heatmap_legend_param = list(title = "z-score"))
+```
+
+![](img/Heatmap_RegulatedGenes.png)
 
 References
 ----------
@@ -878,6 +1056,12 @@ Liao, Y., Smyth, G.K., and Shi, W. (2019). The R package Rsubread is
 easier, faster, cheaper and better for alignment and quantification of
 RNA sequencing reads. Nucleic Acids Res *47*, e47.
 
+Mootha, V.K., Lindgren, C.M., Eriksson, K.F., Subramanian, A., Sihag,
+S., Lehar, J., Puigserver, P., Carlsson, E., Ridderstråle, M., Laurila,
+E., et al. (2003). PGC-1alpha-responsive genes involved in oxidative
+phosphorylation are coordinately downregulated in human diabetes. Nat
+Genet *34*, 267–273.
+
 Pertea, M., Kim, D., Pertea, G.M., Leek, J.T., and Salzberg, S.L.
 (2016). Transcript-level expression analysis of RNA-seq experiments with
 HISAT, StringTie and Ballgown. Nat Protoc *11*, 1650–1667.
@@ -886,6 +1070,12 @@ Pongor, L.S., Gross, J.M., Vera Alvarez, R., Murai, J., Jang, S.M.,
 Zhang, H., Redon, C., Fu, H., Huang, S.Y., Thakur, B., et al. (2020).
 BAMscale: quantification of next-generation sequencing peaks and
 generation of scaled coverage tracks. Epigenetics Chromatin *13*, 21.
+
+Subramanian, A., Tamayo, P., Mootha, V.K., Mukherjee, S., Ebert, B.L.,
+Gillette, M.A., Paulovich, A., Pomeroy, S.L., Golub, T.R., Lander, E.S.,
+et al. (2005). Gene set enrichment analysis: a knowledge-based approach
+for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S
+A *102*, 15545–15550.
 
 Yu, X., Martin, P.G.P., and Michaels, S.D. (2019). BORDER proteins
 protect expression of neighboring genes by promoting 3’ Pol II pausing
