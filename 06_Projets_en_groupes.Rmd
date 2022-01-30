@@ -1,0 +1,227 @@
+---
+title: "Projets en groupe"
+author: "Pascal"
+date: "30 janvier 2022"
+output: 
+  html_document:
+      toc: true
+      toc_depth: 3
+      toc_float: true
+bibliography: 06_Projets_en_groupes.bibtex
+csl: cell.csl
+highlight: github
+always_allow_html: true
+---
+
+<!-- convert to md using 
+      rmarkdown::render("06_Projets_en_groupes.Rmd", 
+                        rmarkdown::md_document(variant = "markdown_github"), 
+                        output_file="06_Projets_en_groupes.md") -->
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+library(magrittr)
+```
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+#Résultats de l'analyse différentielle (DESeq2)
+restab <- readRDS(file.path("results", "RData", "DESeq2res.rds"))
+
+#noms des gènes uprégulés
+upgn <- restab %>% 
+          as.data.frame() %>%
+          dplyr::filter(padj < 0.05, log2FoldChange > 0) %>%
+          rownames
+
+# résultats analyse GO
+ego <- readRDS(file.path("results", "RData", "EnrichGOBP_upregulatedGenes.rds"))
+
+#catégories significatives (50 termes GO)
+go_id = ego@result %>% 
+  dplyr::filter(p.adjust < 0.001) %>% 
+  dplyr::pull(ID)
+
+```
+
+## Introduction
+
+Au cours de l'analyse des données [GSE112441](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112441) nous avons identifié des gènes dont l'expression est augmentée chez les plantes *bdr1,2,3*, mutantes pour les 3 protéines BORDER, par rapport aux plantes contrôles de type sauvage *WT*.  
+
+Nous pouvons récupérér la liste de ces gènes ainsi:
+
+```{r eval = FALSE}
+# srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+# définir le répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
+# chargement des packages
+library(DESeq2)
+
+#Résultats de l'analyse différentielle (DESeq2)
+restab <- readRDS("DESeq2res.rds")
+
+#noms des gènes uprégulés
+upgn <- restab %>% 
+          as.data.frame() %>%
+          dplyr::filter(padj < 0.05, log2FoldChange > 0) %>%
+          rownames
+
+```
+
+Nous avons également identifié que beaucoup de ces gènes sont impliqués dans des fonctions liées aux systèmes de défense de l'organisme, à la fois contre des stress biotiques (bactéries, champignons) et contre des stress abiotiques (hypoxie en particulier).  
+
+Nous pouvons récupérer les résultats des analyses d'enrichissement ainsi:  
+
+```{r, eval = FALSE}
+# Répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
+#Librairies
+library(clusterProfiler)
+library(dplyr)
+
+# Ensemble des résultats
+ego <- readRDS("EnrichGOBP_upregulatedGenes.rds")
+
+#récupération des annotations GO BP significatives (50 termes GO)
+go_id = ego@result %>% 
+  dplyr::filter(p.adjust < 0.001) %>% 
+  dplyr::pull(ID)
+
+```
+
+Parmi les catégories GO, nous aimerions savoir lesquelles sont vraiment liées aux mécanismes de défense.  
+Pour récupérer les termes GO associées aux catégories significatives:
+
+```{r, message = FALSE}
+#librairie
+library(GO.db)
+
+go_id_terms <- AnnotationDbi::select(GO.db, go_id, "TERM")  
+
+```
+
+Voici la liste de tous les termes GO significatifs
+```{r echo=FALSE}
+knitr::kable(go_id_terms, 
+             caption = "Termes GO BP enrichis dans les gènes uprégulés") %>%
+  kableExtra::kable_styling(font_size = 13,
+                            bootstrap_options = c("striped", "condensed"),
+                            full_width = FALSE)
+
+```
+
+Parmi ces termes, nous sélectionnons ceux que l'on estime relever de ces réponses de défense:
+
+```{r}
+defres <- c("GO:0009620", "GO:0042742", "GO:0050832", "GO:0071456", 
+            "GO:0009611", "GO:0036294", "GO:0071453", "GO:0006979", 
+            "GO:0001666", "GO:0036293", "GO:0070482", "GO:0010200",
+            "GO:0009627", "GO:0002239", "GO:0009682", "GO:0045087", 
+            "GO:0002376", "GO:0006955", "GO:0031347", "GO:0002831", 
+            "GO:0009751", "GO:0032101", "GO:0002221", "GO:0009753")
+```
+
+Les liens entre les gènes et les catégories GO sont disponibles dans `ego@geneSets` qui est une liste dont chaque élément correspond à un terme GO et contient un vecteur des noms de gènes annotés avec ce terme.  
+On récupère donc les identifiants de tous les gènes annotés avec les termes `defres` :  
+
+```{r}
+defres_genes_all <- unique(unlist(ego@geneSets[defres], use.names = FALSE))
+```
+
+Puis on filtre pour ne retenir que les gènes uprégulés dans notre expérience:
+```{r}
+defres_genes_up <- intersect(upgn, defres_genes_all)
+```
+
+<br>
+
+Voici la liste des `r length(defres_genes_up)` gènes contenus dans `defres_genes_up` et leurs symboles :
+<br>
+
+<style>
+.table>tbody>tr>td{
+  padding: 1px;
+}
+</style>
+
+```{r, echo = FALSE, message = FALSE, warning=FALSE, results = 'asis'}
+require(org.At.tair.db)
+GeneTableSym <- AnnotationDbi::select(org.At.tair.db, defres_genes_up, "SYMBOL")
+GeneTableSym_SYMBOL <- sapply(split(GeneTableSym$SYMBOL, GeneTableSym$TAIR), paste, collapse = ",")
+
+GeneTableSym = cbind.data.frame("#" = 1:length(GeneTableSym_SYMBOL),
+                                "TAIR" = names(GeneTableSym_SYMBOL),
+                                "SYMBOLS" = GeneTableSym_SYMBOL,
+                                "log2FC" = round(restab[names(GeneTableSym_SYMBOL), "log2FoldChange"], 2),
+                                "padj" = signif(restab[names(GeneTableSym_SYMBOL), "padj"], 2))
+cutRows <- round(nrow(GeneTableSym)/2)
+t1 <- GeneTableSym[1:cutRows,]
+t2 <- GeneTableSym[(cutRows+1):nrow(GeneTableSym),]
+rownames(t1) <- rownames(t2) <- NULL
+
+t1 %>%
+  knitr::kable(format = 'html', align = 'lccll') %>%
+  kableExtra::kable_styling(full_width = FALSE, font_size = 9, position = "float_left")
+
+t2 %>%
+  knitr::kable(format = 'html', align = 'lccll') %>%
+  kableExtra::kable_styling(full_width = FALSE, font_size = 9, position = "right")
+
+```
+
+<br>
+<br>
+
+Nous avons donc identifié un ensemble de `r length(defres_genes_up)` gènes impliqués dans des mécanismes de défense contre des stress biotiques et abiotiques, en particulier l'hypoxie ou la defense contre les bactéries et les champignons.  
+Nous souhaitons à present voir dans quelle mesure ces gènes sont représentés (ou enrichis) et comment ils se comportent dans des expériences publiées impliquant ce type de stress.
+
+<br>
+
+## Groupe 1: réponse aux motifs bactériens
+
+Dans un article de [Plant J en 2018](https://pubmed.ncbi.nlm.nih.gov/29024173/) [@pmid29024173] les auteurs analyses comment le transcriptome de racines d'Arabidopsis thaliana change en réponse à une exposition de courte durée (*30min, 1h, 3h ou 5h*)
+
+  - à une rhizobactérie bénéfique (*"rhizo"*)
+
+ou bien à 2 peptides d'origine bactérienne qui stimulent le système immunitaire des plantes:
+
+  - flg22 provenant de la rhizobactérie bénéfique Pseudomonas simiae WCS417 (*"flg22Psim"*)
+  - flg22 provenant de la bactérie pathogène Pseudomonas aeruginosa (*"flg22Paer"*)
+
+Les données n'ont pas été déposées dans GEO mais on peut les récupérer via SRA.
+
+<br>
+
+## Groupe 2: réponse aux champignons
+
+[Plant J en 2018](https://pubmed.ncbi.nlm.nih.gov/29024173/) [@pmid29024173]  
+
+  - chitin
+
++ add B cinerea challenge  
+
+
+<br>
+
+## Groupe 3: réponse à l'ozone
+
+[GSE79855](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE79855)  
+ 
+
+<br>
+
+## Groupe 4: réponse immune induite
+
+[GSE80448](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE80448)  
+[@pmid29226970]
+
+

@@ -748,13 +748,27 @@ dotplot(ego, showCategory = 10)
  Le package [simplifyEnrichment](https://github.com/jokergoo/simplifyEnrichment) propose également de simplifier les résulats d'une analyse d'enrichissement en étudiant comment les différentes annotations se regroupent sur un plan sémantique.
  
 ```{r, eval=FALSE}
+# srun --time=02:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+# définir le répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
 # Chargement du pakage
 library(simplifyEnrichment)
+
 # choix d'une graine arbitraire (pour la réproductibilité)
 set.seed(123)
 
-#récupération des annotations GO BP significatives (74 termes GO)
-go_id = ego@result %>% filter(p.adjust < 0.001) %>% pull(ID)
+#Importer les résultats de l'analyse d'enrichissement de termes GO BP
+ego <- readRDS("EnrichGOBP_upregulatedGenes.rds")
+
+#récupération des annotations GO BP significatives (50 termes GO)
+go_id = ego@result %>% 
+  dplyr::filter(p.adjust < 0.001) %>% 
+  dplyr::pull(ID)
 
 #calcul des similarités entre termes GO BP
 mat = GO_similarity(go_id, ont="BP")
@@ -787,7 +801,7 @@ library(DESeq2)
 library(EnrichedHeatmap)
 library(dplyr)
 
-# chargement de la table résultat
+# chargement de la table résultats
 dds <- readRDS("DESeq2obj.rds")
 
 #noms des gènes d'intérêts (régulés)
