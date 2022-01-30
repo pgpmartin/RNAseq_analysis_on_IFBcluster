@@ -106,16 +106,17 @@ Pour récupérer les termes GO associées aux catégories significatives:
 library(GO.db)
 
 go_id_terms <- AnnotationDbi::select(GO.db, go_id, "TERM")  
-
 ```
 
 Voici la liste de tous les termes GO significatifs
 ```{r echo=FALSE}
-knitr::kable(go_id_terms, 
+go_id_terms_format <- go_id_terms
+go_id_terms_format$GOID <- gsub("GO:", "GO\\\\:", go_id_terms$GOID)
+knitr::kable(go_id_terms_format, align = "lc",
              caption = "Termes GO BP enrichis dans les gènes uprégulés") %>%
-  kableExtra::kable_styling(font_size = 13,
-                            bootstrap_options = c("striped", "condensed"),
-                            full_width = FALSE)
+  kableExtra::kable_styling(font_size = 12,
+                            bootstrap_options = c("striped"),
+                            full_width = FALSE, position = "center")
 
 ```
 

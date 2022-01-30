@@ -73,7 +73,7 @@ go_id_terms <- AnnotationDbi::select(GO.db, go_id, "TERM")
 ```
 
 Voici la liste de tous les termes GO significatifs
-<table class="table table-striped table-condensed" style="font-size: 13px; width: auto !important; margin-left: auto; margin-right: auto;">
+<table class="table table-striped" style="font-size: 12px; width: auto !important; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
 Termes GO BP enrichis dans les gènes uprégulés
 </caption>
@@ -82,7 +82,7 @@ Termes GO BP enrichis dans les gènes uprégulés
 <th style="text-align:left;">
 GOID
 </th>
-<th style="text-align:left;">
+<th style="text-align:center;">
 TERM
 </th>
 </tr>
@@ -90,401 +90,401 @@ TERM
 <tbody>
 <tr>
 <td style="text-align:left;">
-<GO:0009620>
+GO:0009620
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to fungus
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0042742>
+GO:0042742
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 defense response to bacterium
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0050832>
+GO:0050832
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 defense response to fungus
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0019748>
+GO:0019748
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 secondary metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0071456>
+GO:0071456
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 cellular response to hypoxia
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009611>
+GO:0009611
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to wounding
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0036294>
+GO:0036294
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 cellular response to decreased oxygen levels
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0071453>
+GO:0071453
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 cellular response to oxygen levels
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0006979>
+GO:0006979
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to oxidative stress
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0001666>
+GO:0001666
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to hypoxia
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0036293>
+GO:0036293
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to decreased oxygen levels
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0070482>
+GO:0070482
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to oxygen levels
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0044550>
+GO:0044550
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 secondary metabolite biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0016143>
+GO:0016143
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 S-glycoside metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0019757>
+GO:0019757
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 glycosinolate metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0019760>
+GO:0019760
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 glucosinolate metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0006790>
+GO:0006790
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 sulfur compound metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0010200>
+GO:0010200
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to chitin
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009404>
+GO:0009404
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 toxin metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0044272>
+GO:0044272
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 sulfur compound biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0016144>
+GO:0016144
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 S-glycoside biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0019758>
+GO:0019758
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 glycosinolate biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0019761>
+GO:0019761
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 glucosinolate biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0010243>
+GO:0010243
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to organonitrogen compound
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009627>
+GO:0009627
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 systemic acquired resistance
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0002239>
+GO:0002239
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to oomycetes
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0010120>
+GO:0010120
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 camalexin biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0052317>
+GO:0052317
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 camalexin metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0042430>
+GO:0042430
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 indole-containing compound metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009403>
+GO:0009403
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 toxin biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009700>
+GO:0009700
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 indole phytoalexin biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0046217>
+GO:0046217
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 indole phytoalexin metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0052314>
+GO:0052314
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 phytoalexin metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0052315>
+GO:0052315
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 phytoalexin biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:1901698>
+GO:1901698
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to nitrogen compound
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:1901659>
+GO:1901659
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 glycosyl compound biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:1901657>
+GO:1901657
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 glycosyl compound metabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009682>
+GO:0009682
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 induced systemic resistance
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0045087>
+GO:0045087
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 innate immune response
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0002376>
+GO:0002376
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 immune system process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0042435>
+GO:0042435
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 indole-containing compound biosynthetic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0006955>
+GO:0006955
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 immune response
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0031347>
+GO:0031347
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 regulation of defense response
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0002831>
+GO:0002831
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 regulation of response to biotic stimulus
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009751>
+GO:0009751
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to salicylic acid
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0032101>
+GO:0032101
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 regulation of response to external stimulus
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0016998>
+GO:0016998
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 cell wall macromolecule catabolic process
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0002221>
+GO:0002221
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 pattern recognition receptor signaling pathway
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0012501>
+GO:0012501
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 programmed cell death
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-<GO:0009753>
+GO:0009753
 </td>
-<td style="text-align:left;">
+<td style="text-align:center;">
 response to jasmonic acid
 </td>
 </tr>
