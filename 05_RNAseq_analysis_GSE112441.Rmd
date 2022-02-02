@@ -46,6 +46,18 @@ L'étude porte également sur d'autres génotypes (*fpa*, *bdr1*, *bdr2* et *bdr
 Certaines données apparaissent donc à la fois dans **GEO** et dans **SRA** mais il arrive aussi que des données ne soient disponibles que dans l'une de ces deux sources.  
 L'**European Nucleotide Archive** ([ENA](https://www.ebi.ac.uk/ena)) stocke une copie de la plupart des données présentes dans [SRA](https://www.ncbi.nlm.nih.gov/sra).  Depuis la France, c'est un site de choix pour télécharger des données.  
 
+</br>
+
+### Pipeline d'analyse
+
+Le schéma ci-dessous illustre :
+
+  - les étapes d'analyse que nous allons suivre dans ce document  
+  - les outils / logiciels / packages que nous allons utiliser pour réaliser les analyses  
+  - les formats de fichier que nous allons rencontrer au cours des analyses  
+  
+![](img/RNAseq_pipeline.png)
+</br>
 
 ### Préparation des dossiers pour les analyses
 

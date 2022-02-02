@@ -60,6 +60,20 @@ stocke une copie de la plupart des données présentes dans
 [SRA](https://www.ncbi.nlm.nih.gov/sra). Depuis la France, c’est un site
 de choix pour télécharger des données.
 
+</br>
+
+### Pipeline d’analyse
+
+Le schéma ci-dessous illustre :
+
+-   les étapes d’analyse que nous allons suivre dans ce document  
+-   les outils / logiciels / packages que nous allons utiliser pour
+    réaliser les analyses  
+-   les formats de fichier que nous allons rencontrer au cours des
+    analyses
+
+![](img/RNAseq_pipeline.png) </br>
+
 ### Préparation des dossiers pour les analyses
 
 #### Dossiers utilisés:
@@ -969,13 +983,27 @@ d’enrichissement en étudiant comment les différentes annotations se
 regroupent sur un plan sémantique.
 
 ``` r
+# srun --time=02:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
+# module load r/4.1.1
+# R
+
+# définir le répertoire de travail
+projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+setwd(projPath)
+
 # Chargement du pakage
 library(simplifyEnrichment)
+
 # choix d'une graine arbitraire (pour la réproductibilité)
 set.seed(123)
 
-#récupération des annotations GO BP significatives (74 termes GO)
-go_id = ego@result %>% filter(p.adjust < 0.001) %>% pull(ID)
+#Importer les résultats de l'analyse d'enrichissement de termes GO BP
+ego <- readRDS("EnrichGOBP_upregulatedGenes.rds")
+
+#récupération des annotations GO BP significatives (50 termes GO)
+go_id = ego@result %>% 
+  dplyr::filter(p.adjust < 0.001) %>% 
+  dplyr::pull(ID)
 
 #calcul des similarités entre termes GO BP
 mat = GO_similarity(go_id, ont="BP")
@@ -1008,7 +1036,7 @@ library(DESeq2)
 library(EnrichedHeatmap)
 library(dplyr)
 
-# chargement de la table résultat
+# chargement de la table résultats
 dds <- readRDS("DESeq2obj.rds")
 
 #noms des gènes d'intérêts (régulés)
