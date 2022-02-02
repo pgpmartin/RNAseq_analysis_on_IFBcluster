@@ -275,8 +275,8 @@ div.tocify {
       rmarkdown::render("06_Projets_en_groupes.Rmd", 
                         rmarkdown::md_document(variant = "markdown_github"), 
                         output_file="06_Projets_en_groupes.md") -->
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
+<div id="introduction-border-regulated-defense-genes-bdrg" class="section level2">
+<h2>Introduction: BORDER-regulated defense genes (<strong>BDRG</strong>)</h2>
 <p>Au cours de l’analyse des données <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112441">GSE112441</a> nous avons identifié des gènes dont l’expression est augmentée chez les plantes <em>bdr1,2,3</em>, mutantes pour les 3 protéines BORDER, par rapport aux plantes contrôles de type sauvage <em>WT</em>.</p>
 <p>Nous pouvons récupérér la liste de ces gènes ainsi:</p>
 <pre class="r"><code># srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
@@ -3101,45 +3101,212 @@ RHS19
 </table>
 <p><br> <br></p>
 <p>Nous avons donc identifié un ensemble de 135 gènes impliqués dans des mécanismes de défense contre des stress biotiques et abiotiques, en particulier l’hypoxie ou la defense contre les bactéries et les champignons.<br />
-Nous souhaitons à present voir dans quelle mesure ces gènes sont représentés (ou enrichis) et comment ils se comportent dans des expériences publiées impliquant ce type de stress.</p>
+Nous allons appeler ce groupe de gènes les <strong>BRDG</strong> pour <strong>BORDER-regulated defense genes</strong>.<br />
+Nous souhaitons à present voir dans quelle mesure ces gènes sont représentés (ou enrichis) et comment ils se comportent dans une expérience publiée impliquant ce type de stress.</p>
 <p><br></p>
 </div>
-<div id="groupe-1-réponse-aux-motifs-bactériens" class="section level2">
-<h2>Groupe 1: réponse aux motifs bactériens</h2>
-<p>Dans un article de <a href="https://pubmed.ncbi.nlm.nih.gov/29024173/">Plant J en 2018</a> <span class="citation">(Stringlis et al., 2018)</span> les auteurs analyses comment le transcriptome de racines d’Arabidopsis thaliana change en réponse à une exposition de courte durée (<em>30min, 1h, 3h ou 5h</em>)</p>
+<div id="présentation-des-données" class="section level2">
+<h2>Présentation des données</h2>
+<p>Nous allons travailler sur des données publiées dans un article de <a href="https://pubmed.ncbi.nlm.nih.gov/29024173/">Plant J en 2018</a> <span class="citation">(Stringlis et al., 2018)</span>.<br />
+Les auteurs y analysent comment le transcriptome de racines d’Arabidopsis thaliana est modulé en réponse à une exposition de courte durée (<em>30min, 1h, 3h ou 6h</em>) :</p>
+<ol style="list-style-type: decimal">
+<li>à une rhizobactérie bénéfique Pseudomonas simiae WCS417 (<strong>“rhizo”</strong>)</li>
+</ol>
+<p>à 2 peptides d’origine bactérienne qui stimulent le système immunitaire des plantes:</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>flg22 provenant de la rhizobactérie bénéfique Pseudomonas simiae WCS417 (<strong>“flg22Psim”</strong>)<br />
+</p></li>
+<li><p>flg22 provenant de la bactérie pathogène Pseudomonas aeruginosa (<strong>“flg22Paer”</strong>)</p></li>
+<li><p>à la chitin, d’origine fongique (<strong>“chitin”</strong>)</p></li>
+</ol>
+<p>Le transcriptome racinaire de plantes contrôles (<strong>“Control”</strong>), non exposées à ces stimuli, est analysé aux mêmes temps de cinétique, ainsi qu’au temps t=0h.</p>
+<p>Les données n’ont pas été déposées dans GEO mais on peut les récupérer via SRA/ENA.</p>
+<p><strong>Objectif :</strong><br />
+Chaque groupe analysera l’un de ces 4 stimuli en le comparant aux plantes contrôles et évaluera:</p>
 <ul>
-<li>à une rhizobactérie bénéfique (<em>“rhizo”</em>)</li>
+<li>à chaque temps, le nombre gènes uprégulés ou downrégulés dans les racines de plantes exposées au stimulus par rapport aux plantes contrôles (DESeq2)</li>
+<li>à chaque temps le nombre et la proportion de gènes <strong>BDRG</strong> qui sont uprégulés ou downrégulés, ainsi que la significativité de cet enrichissement (test exact de Fisher, diagramme de Venn)</li>
+<li>pour tous les temps, une représentation des gènes <strong>BDRG</strong> dans les différents échantillons sous forme de heatmap</li>
 </ul>
-<p>ou bien à 2 peptides d’origine bactérienne qui stimulent le système immunitaire des plantes:</p>
+<p>(OPTIONNEL :)</p>
 <ul>
-<li>flg22 provenant de la rhizobactérie bénéfique Pseudomonas simiae WCS417 (<em>“flg22Psim”</em>)</li>
-<li>flg22 provenant de la bactérie pathogène Pseudomonas aeruginosa (<em>“flg22Paer”</em>)</li>
+<li>à chaque temps, une analyse de l’enrichissement de catégories fonctionnelles parmi les gènes up- ou downrégulés</li>
 </ul>
-<p>Les données n’ont pas été déposées dans GEO mais on peut les récupérer via SRA.</p>
 <p><br></p>
 </div>
-<div id="groupe-2-réponse-aux-champignons" class="section level2">
-<h2>Groupe 2: réponse aux champignons</h2>
-<p><a href="https://pubmed.ncbi.nlm.nih.gov/29024173/">Plant J en 2018</a> <span class="citation">(Stringlis et al., 2018)</span></p>
+<div id="groupe-1-réponse-à-une-rhizobactérie-bénéfique" class="section level2">
+<h2>Groupe 1: réponse à une rhizobactérie bénéfique</h2>
+<p>Les échantillons sont des triplicats biologiques de :</p>
 <ul>
-<li><p>chitin</p></li>
-<li><p>add B cinerea challenge</p></li>
+<li>Plantes contrôles à 0h, 30min, 1h, 3h, 6h<br />
+</li>
+<li>Plantes exposées à la rhizobactérie bénéfique <em>Pseudomonas simiae WCS417</em> à 30 min, 1h, 3h et 6h</li>
 </ul>
+<pre class="r"><code>datadir=&quot;/shared/projects/form_2022_07/projet_groupe1/data&quot;
+ENAftp=&quot;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623&quot;
+
+#Controls
+curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
+curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+
+#Beneficial rhizobacteria Pseudomonas simiae WCS417
+curl -L ${ENAftp}/003/SRR6236993/SRR6236993.fastq.gz -o ${datadir}/SRR6236993_rhizo_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/004/SRR6236994/SRR6236994.fastq.gz -o ${datadir}/SRR6236994_rhizo_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6237001/SRR6237001.fastq.gz -o ${datadir}/SRR6237001_rhizo_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6236989/SRR6236989.fastq.gz -o ${datadir}/SRR6236989_rhizo_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/008/SRR6236988/SRR6236988.fastq.gz -o ${datadir}/SRR6236988_rhizo_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/007/SRR6236987/SRR6236987.fastq.gz -o ${datadir}/SRR6236987_rhizo_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/005/SRR6237025/SRR6237025.fastq.gz -o ${datadir}/SRR6237025_rhizo_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/006/SRR6237026/SRR6237026.fastq.gz -o ${datadir}/SRR6237026_rhizo_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/007/SRR6237027/SRR6237027.fastq.gz -o ${datadir}/SRR6237027_rhizo_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/006/SRR6237006/SRR6237006.fastq.gz -o ${datadir}/SRR6237006_rhizo_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/003/SRR6237003/SRR6237003.fastq.gz -o ${datadir}/SRR6237003_rhizo_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237004/SRR6237004.fastq.gz -o ${datadir}/SRR6237004_rhizo_6_h_replicate3.fastq.gz</code></pre>
 <p><br></p>
 </div>
-<div id="groupe-3-réponse-à-lozone" class="section level2">
-<h2>Groupe 3: réponse à l’ozone</h2>
-<p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE79855">GSE79855</a></p>
+<div id="groupe-2-réponse-au-peptide-flg22-dune-rhizobactérie-bénéfique" class="section level2">
+<h2>Groupe 2: réponse au peptide flg22 d’une rhizobactérie bénéfique</h2>
+<p>Le peptide flg22 (<em>“flg22Psim”</em>) provient de la rhizobactérie bénéfique <em>Pseudomonas simiae WCS417</em></p>
+<p>Les échantillons sont des triplicats biologiques de :</p>
+<ul>
+<li>Plantes contrôles (<strong>Control</strong>) à 0h, 30min, 1h, 3h, 6h<br />
+</li>
+<li>Plantes exposées au peptide flg22 de la rhizobactérie bénéfique <em>Pseudomonas simiae WCS417</em> (<strong>flg22Psim</strong>) à 30 min, 1h, 3h et 6h</li>
+</ul>
+<pre class="r"><code>datadir=&quot;/shared/projects/form_2022_07/projet_groupe2/data&quot;
+ENAftp=&quot;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623&quot;
+
+#Controls
+curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
+curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+
+#flg22 from beneficial rhizobacteria Pseudomonas simiae WCS417
+curl -L ${ENAftp}/008/SRR6237018/SRR6237018.fastq.gz -o ${datadir}/SRR6237018_flg22Psim_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6237017/SRR6237017.fastq.gz -o ${datadir}/SRR6237017_flg22Psim_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237002/SRR6237002.fastq.gz -o ${datadir}/SRR6237002_flg22Psim_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/006/SRR6236986/SRR6236986.fastq.gz -o ${datadir}/SRR6236986_flg22Psim_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6236985/SRR6236985.fastq.gz -o ${datadir}/SRR6236985_flg22Psim_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6236984/SRR6236984.fastq.gz -o ${datadir}/SRR6236984_flg22Psim_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/008/SRR6237028/SRR6237028.fastq.gz -o ${datadir}/SRR6237028_flg22Psim_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6237035/SRR6237035.fastq.gz -o ${datadir}/SRR6237035_flg22Psim_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237034/SRR6237034.fastq.gz -o ${datadir}/SRR6237034_flg22Psim_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/000/SRR6237030/SRR6237030.fastq.gz -o ${datadir}/SRR6237030_flg22Psim_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/009/SRR6237029/SRR6237029.fastq.gz -o ${datadir}/SRR6237029_flg22Psim_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/007/SRR6237007/SRR6237007.fastq.gz -o ${datadir}/SRR6237007_flg22Psim_6_h_replicate3.fastq.gz</code></pre>
 <p><br></p>
 </div>
-<div id="groupe-4-réponse-immune-induite" class="section level2">
-<h2>Groupe 4: réponse immune induite</h2>
-<p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE80448">GSE80448</a><br />
-<span class="citation">(Jacob et al., 2018)</span></p>
+<div id="groupe-3-réponse-au-peptide-flg22-dune-bactérie-pathogène" class="section level2">
+<h2>Groupe 3: réponse au peptide flg22 d’une bactérie pathogène</h2>
+<p>Le peptide flg22 (<em>“flg22Paer”</em>) provient de la bactérie pathogène <em>Pseudomonas aeruginosa</em></p>
+<p>Les échantillons sont des triplicats biologiques de :</p>
+<ul>
+<li>Plantes contrôles (<strong>Control</strong>) à 0h, 30min, 1h, 3h, 6h<br />
+</li>
+<li>Plantes exposées au peptide flg22 de la bactérie pathogène <em>Pseudomonas aeruginosa</em> (<strong>flg22Paer</strong>) à 30 min, 1h, 3h et 6h</li>
+</ul>
+<pre class="r"><code>datadir=&quot;/shared/projects/form_2022_07/projet_groupe3/data&quot;
+ENAftp=&quot;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623&quot;
+
+#Controls
+curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
+curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+
+#flg22 from pathogenic Pseudomonas aeruginosa
+curl -L ${ENAftp}/005/SRR6237015/SRR6237015.fastq.gz -o ${datadir}/SRR6237015_flg22Paer_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/006/SRR6237016/SRR6237016.fastq.gz -o ${datadir}/SRR6237016_flg22Paer_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/003/SRR6237013/SRR6237013.fastq.gz -o ${datadir}/SRR6237013_flg22Paer_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/003/SRR6236983/SRR6236983.fastq.gz -o ${datadir}/SRR6236983_flg22Paer_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6236992/SRR6236992.fastq.gz -o ${datadir}/SRR6236992_flg22Paer_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6236991/SRR6236991.fastq.gz -o ${datadir}/SRR6236991_flg22Paer_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6237037/SRR6237037.fastq.gz -o ${datadir}/SRR6237037_flg22Paer_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/006/SRR6237036/SRR6237036.fastq.gz -o ${datadir}/SRR6237036_flg22Paer_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/009/SRR6237039/SRR6237039.fastq.gz -o ${datadir}/SRR6237039_flg22Paer_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/008/SRR6237008/SRR6237008.fastq.gz -o ${datadir}/SRR6237008_flg22Paer_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6237032/SRR6237032.fastq.gz -o ${datadir}/SRR6237032_flg22Paer_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/003/SRR6237033/SRR6237033.fastq.gz -o ${datadir}/SRR6237033_flg22Paer_6_h_replicate3.fastq.gz</code></pre>
+<p><br></p>
+</div>
+<div id="groupe-4-réponse-à-la-chitine" class="section level2">
+<h2>Groupe 4: réponse à la chitine</h2>
+<p>Les échantillons sont des triplicats biologiques de :</p>
+<ul>
+<li>Plantes contrôles (<strong>Control</strong>) à 0h, 30min, 1h, 3h, 6h<br />
+</li>
+<li>Plantes exposées à la chitine (<strong>chitin</strong>) à 30 min, 1h, 3h et 6h</li>
+</ul>
+<pre class="r"><code>datadir=&quot;/shared/projects/form_2022_07/projet_groupe4/data&quot;
+ENAftp=&quot;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623&quot;
+
+#Controls
+curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
+curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+
+# Treatment with chitin
+curl -L ${ENAftp}/004/SRR6237014/SRR6237014.fastq.gz -o ${datadir}/SRR6237014_chitin_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/001/SRR6237011/SRR6237011.fastq.gz -o ${datadir}/SRR6237011_chitin_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237012/SRR6237012.fastq.gz -o ${datadir}/SRR6237012_chitin_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6237019/SRR6237019.fastq.gz -o ${datadir}/SRR6237019_chitin_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237020/SRR6237020.fastq.gz -o ${datadir}/SRR6237020_chitin_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6237021/SRR6237021.fastq.gz -o ${datadir}/SRR6237021_chitin_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/008/SRR6237038/SRR6237038.fastq.gz -o ${datadir}/SRR6237038_chitin_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/001/SRR6237041/SRR6237041.fastq.gz -o ${datadir}/SRR6237041_chitin_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/000/SRR6237040/SRR6237040.fastq.gz -o ${datadir}/SRR6237040_chitin_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/005/SRR6237045/SRR6237045.fastq.gz -o ${datadir}/SRR6237045_chitin_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/004/SRR6237044/SRR6237044.fastq.gz -o ${datadir}/SRR6237044_chitin_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6237031/SRR6237031.fastq.gz -o ${datadir}/SRR6237031_chitin_6_h_replicate3.fastq.gz</code></pre>
 <div id="refs" class="references csl-bib-body">
-<div id="ref-pmid29226970" class="csl-entry">
-Jacob, F., Kracher, B., Mine, A., Seyfferth, C., Blanvillain-Baufumé, S., Parker, J.E., Tsuda, K., Schulze-Lefert, P., and Maekawa, T. (2018). <span class="nocase"><span>A</span> dominant-interfering camta3 mutation compromises primary transcriptional outputs mediated by both cell surface and intracellular immune receptors in <span>A</span>rabidopsis thaliana</span>. New Phytol <em>217</em>, 1667–1680.
-</div>
 <div id="ref-pmid29024173" class="csl-entry">
 Stringlis, I.A., Proietti, S., Hickman, R., Van Verk, M.C., Zamioudis, C., and Pieterse, C.M.J. (2018). <span class="nocase"><span>R</span>oot transcriptional dynamics induced by beneficial rhizobacteria and microbial immune elicitors reveal signatures of adaptation to mutualists</span>. Plant J <em>93</em>, 166–180.
 </div>
