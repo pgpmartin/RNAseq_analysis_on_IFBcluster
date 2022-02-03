@@ -2935,17 +2935,14 @@ plantes contrôles et évaluera:
 
 <br>
 
-Groupe 1: réponse à une rhizobactérie bénéfique
------------------------------------------------
+Téléchargement des données
+--------------------------
 
-Les échantillons sont des triplicats biologiques de :
+Les données de l’ensemble de l’étude sont stockées dans un dossier nommé
+`data_project`
 
--   Plantes contrôles à 0h, 30min, 1h, 3h, 6h
-    -   Plantes exposées à la rhizobactérie bénéfique *Pseudomonas
-        simiae WCS417* à 30 min, 1h, 3h et 6h
-
-``` r
-datadir="/shared/projects/form_2022_07/projet_groupe1/data"
+``` bash
+datadir="/shared/projects/form_2022_07/data_project"
 ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
 
 #Controls
@@ -2978,6 +2975,82 @@ curl -L ${ENAftp}/007/SRR6237027/SRR6237027.fastq.gz -o ${datadir}/SRR6237027_rh
 curl -L ${ENAftp}/006/SRR6237006/SRR6237006.fastq.gz -o ${datadir}/SRR6237006_rhizo_6_h_replicate1.fastq.gz
 curl -L ${ENAftp}/003/SRR6237003/SRR6237003.fastq.gz -o ${datadir}/SRR6237003_rhizo_6_h_replicate2.fastq.gz
 curl -L ${ENAftp}/004/SRR6237004/SRR6237004.fastq.gz -o ${datadir}/SRR6237004_rhizo_6_h_replicate3.fastq.gz
+
+#flg22 from beneficial rhizobacteria Pseudomonas simiae WCS417
+curl -L ${ENAftp}/002/SRR6237002/SRR6237002.fastq.gz -o ${datadir}/SRR6237002_flg22Psim_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/007/SRR6237017/SRR6237017.fastq.gz -o ${datadir}/SRR6237017_flg22Psim_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/008/SRR6237018/SRR6237018.fastq.gz -o ${datadir}/SRR6237018_flg22Psim_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/006/SRR6236986/SRR6236986.fastq.gz -o ${datadir}/SRR6236986_flg22Psim_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6236985/SRR6236985.fastq.gz -o ${datadir}/SRR6236985_flg22Psim_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6236984/SRR6236984.fastq.gz -o ${datadir}/SRR6236984_flg22Psim_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/008/SRR6237028/SRR6237028.fastq.gz -o ${datadir}/SRR6237028_flg22Psim_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/005/SRR6237035/SRR6237035.fastq.gz -o ${datadir}/SRR6237035_flg22Psim_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/004/SRR6237034/SRR6237034.fastq.gz -o ${datadir}/SRR6237034_flg22Psim_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/000/SRR6237030/SRR6237030.fastq.gz -o ${datadir}/SRR6237030_flg22Psim_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/009/SRR6237029/SRR6237029.fastq.gz -o ${datadir}/SRR6237029_flg22Psim_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/007/SRR6237007/SRR6237007.fastq.gz -o ${datadir}/SRR6237007_flg22Psim_6_h_replicate3.fastq.gz
+
+#flg22 from pathogenic Pseudomonas aeruginosa
+curl -L ${ENAftp}/005/SRR6237015/SRR6237015.fastq.gz -o ${datadir}/SRR6237015_flg22Paer_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/006/SRR6237016/SRR6237016.fastq.gz -o ${datadir}/SRR6237016_flg22Paer_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/003/SRR6237013/SRR6237013.fastq.gz -o ${datadir}/SRR6237013_flg22Paer_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/003/SRR6236983/SRR6236983.fastq.gz -o ${datadir}/SRR6236983_flg22Paer_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6236992/SRR6236992.fastq.gz -o ${datadir}/SRR6236992_flg22Paer_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6236991/SRR6236991.fastq.gz -o ${datadir}/SRR6236991_flg22Paer_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/007/SRR6237037/SRR6237037.fastq.gz -o ${datadir}/SRR6237037_flg22Paer_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/006/SRR6237036/SRR6237036.fastq.gz -o ${datadir}/SRR6237036_flg22Paer_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/009/SRR6237039/SRR6237039.fastq.gz -o ${datadir}/SRR6237039_flg22Paer_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/008/SRR6237008/SRR6237008.fastq.gz -o ${datadir}/SRR6237008_flg22Paer_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/002/SRR6237032/SRR6237032.fastq.gz -o ${datadir}/SRR6237032_flg22Paer_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/003/SRR6237033/SRR6237033.fastq.gz -o ${datadir}/SRR6237033_flg22Paer_6_h_replicate3.fastq.gz
+
+# Treatment with chitin
+curl -L ${ENAftp}/004/SRR6237014/SRR6237014.fastq.gz -o ${datadir}/SRR6237014_chitin_0.5_h_replicate1.fastq.gz
+curl -L ${ENAftp}/001/SRR6237011/SRR6237011.fastq.gz -o ${datadir}/SRR6237011_chitin_0.5_h_replicate2.fastq.gz
+curl -L ${ENAftp}/002/SRR6237012/SRR6237012.fastq.gz -o ${datadir}/SRR6237012_chitin_0.5_h_replicate3.fastq.gz
+curl -L ${ENAftp}/009/SRR6237019/SRR6237019.fastq.gz -o ${datadir}/SRR6237019_chitin_1_h_replicate1.fastq.gz
+curl -L ${ENAftp}/000/SRR6237020/SRR6237020.fastq.gz -o ${datadir}/SRR6237020_chitin_1_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6237021/SRR6237021.fastq.gz -o ${datadir}/SRR6237021_chitin_1_h_replicate3.fastq.gz
+curl -L ${ENAftp}/008/SRR6237038/SRR6237038.fastq.gz -o ${datadir}/SRR6237038_chitin_3_h_replicate1.fastq.gz
+curl -L ${ENAftp}/001/SRR6237041/SRR6237041.fastq.gz -o ${datadir}/SRR6237041_chitin_3_h_replicate2.fastq.gz
+curl -L ${ENAftp}/000/SRR6237040/SRR6237040.fastq.gz -o ${datadir}/SRR6237040_chitin_3_h_replicate3.fastq.gz
+curl -L ${ENAftp}/005/SRR6237045/SRR6237045.fastq.gz -o ${datadir}/SRR6237045_chitin_6_h_replicate1.fastq.gz
+curl -L ${ENAftp}/004/SRR6237044/SRR6237044.fastq.gz -o ${datadir}/SRR6237044_chitin_6_h_replicate2.fastq.gz
+curl -L ${ENAftp}/001/SRR6237031/SRR6237031.fastq.gz -o ${datadir}/SRR6237031_chitin_6_h_replicate3.fastq.gz
+```
+
+On a créé des liens symboliques vers les données à analyser pour chacun
+des groupes
+
+<br>
+
+Groupe 1: réponse à une rhizobactérie bénéfique
+-----------------------------------------------
+
+Les échantillons sont des triplicats biologiques de :
+
+-   Plantes contrôles à 0h, 30min, 1h, 3h, 6h
+    -   Plantes exposées à la rhizobactérie bénéfique *Pseudomonas
+        simiae WCS417* à 30 min, 1h, 3h et 6h
+
+``` bash
+formdir="/shared/projects/form_2022_07"
+
+datadir="${formdir}/data_project"
+cd $datadir
+
+destdir="${formdir}/projet_groupe1/data"
+mkdir -p $destdir
+
+# Controls
+for fn in `ls SRR*_Control_*.fastq.gz`; do
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
+done
+
+# rhizo
+for fn in `ls SRR*_rhizo_*.fastq.gz`; do
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
+done
 ```
 
 <br>
@@ -2995,40 +3068,24 @@ Les échantillons sont des triplicats biologiques de :
         *Pseudomonas simiae WCS417* (**flg22Psim**) à 30 min, 1h, 3h et
         6h
 
-``` r
-datadir="/shared/projects/form_2022_07/projet_groupe2/data"
-ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
+``` bash
+formdir="/shared/projects/form_2022_07"
 
-#Controls
-curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
-curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
-curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
-curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
-curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
-curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
-curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
-curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
-curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
-curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
-curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
-curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
-curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+datadir="${formdir}/data_project"
+cd $datadir
 
-#flg22 from beneficial rhizobacteria Pseudomonas simiae WCS417
-curl -L ${ENAftp}/002/SRR6237002/SRR6237002.fastq.gz -o ${datadir}/SRR6237002_flg22Psim_0.5_h_replicate1.fastq.gz
-curl -L ${ENAftp}/007/SRR6237017/SRR6237017.fastq.gz -o ${datadir}/SRR6237017_flg22Psim_0.5_h_replicate2.fastq.gz
-curl -L ${ENAftp}/008/SRR6237018/SRR6237018.fastq.gz -o ${datadir}/SRR6237018_flg22Psim_0.5_h_replicate3.fastq.gz
-curl -L ${ENAftp}/006/SRR6236986/SRR6236986.fastq.gz -o ${datadir}/SRR6236986_flg22Psim_1_h_replicate1.fastq.gz
-curl -L ${ENAftp}/005/SRR6236985/SRR6236985.fastq.gz -o ${datadir}/SRR6236985_flg22Psim_1_h_replicate2.fastq.gz
-curl -L ${ENAftp}/004/SRR6236984/SRR6236984.fastq.gz -o ${datadir}/SRR6236984_flg22Psim_1_h_replicate3.fastq.gz
-curl -L ${ENAftp}/008/SRR6237028/SRR6237028.fastq.gz -o ${datadir}/SRR6237028_flg22Psim_3_h_replicate1.fastq.gz
-curl -L ${ENAftp}/005/SRR6237035/SRR6237035.fastq.gz -o ${datadir}/SRR6237035_flg22Psim_3_h_replicate2.fastq.gz
-curl -L ${ENAftp}/004/SRR6237034/SRR6237034.fastq.gz -o ${datadir}/SRR6237034_flg22Psim_3_h_replicate3.fastq.gz
-curl -L ${ENAftp}/000/SRR6237030/SRR6237030.fastq.gz -o ${datadir}/SRR6237030_flg22Psim_6_h_replicate1.fastq.gz
-curl -L ${ENAftp}/009/SRR6237029/SRR6237029.fastq.gz -o ${datadir}/SRR6237029_flg22Psim_6_h_replicate2.fastq.gz
-curl -L ${ENAftp}/007/SRR6237007/SRR6237007.fastq.gz -o ${datadir}/SRR6237007_flg22Psim_6_h_replicate3.fastq.gz
+destdir="${formdir}/projet_groupe2/data"
+mkdir -p $destdir
+
+# Controls
+for fn in `ls SRR*_Control_*.fastq.gz`; do
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
+done
+
+# flg22Psim
+for fn in `ls SRR*_flg22Psim_*.fastq.gz`; do
+  ln -s ${oridir}/${fn} ${destdir}/${fn}
+done
 ```
 
 <br>
@@ -3045,40 +3102,25 @@ Les échantillons sont des triplicats biologiques de :
     -   Plantes exposées au peptide flg22 de la bactérie pathogène
         *Pseudomonas aeruginosa* (**flg22Paer**) à 30 min, 1h, 3h et 6h
 
-``` r
-datadir="/shared/projects/form_2022_07/projet_groupe3/data"
-ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
+``` bash
+formdir="/shared/projects/form_2022_07"
 
-#Controls
-curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
-curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
-curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
-curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
-curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
-curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
-curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
-curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
-curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
-curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
-curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
-curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
-curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+datadir="${formdir}/data_project"
+cd $datadir
 
-#flg22 from pathogenic Pseudomonas aeruginosa
-curl -L ${ENAftp}/005/SRR6237015/SRR6237015.fastq.gz -o ${datadir}/SRR6237015_flg22Paer_0.5_h_replicate1.fastq.gz
-curl -L ${ENAftp}/006/SRR6237016/SRR6237016.fastq.gz -o ${datadir}/SRR6237016_flg22Paer_0.5_h_replicate2.fastq.gz
-curl -L ${ENAftp}/003/SRR6237013/SRR6237013.fastq.gz -o ${datadir}/SRR6237013_flg22Paer_0.5_h_replicate3.fastq.gz
-curl -L ${ENAftp}/003/SRR6236983/SRR6236983.fastq.gz -o ${datadir}/SRR6236983_flg22Paer_1_h_replicate1.fastq.gz
-curl -L ${ENAftp}/002/SRR6236992/SRR6236992.fastq.gz -o ${datadir}/SRR6236992_flg22Paer_1_h_replicate2.fastq.gz
-curl -L ${ENAftp}/001/SRR6236991/SRR6236991.fastq.gz -o ${datadir}/SRR6236991_flg22Paer_1_h_replicate3.fastq.gz
-curl -L ${ENAftp}/007/SRR6237037/SRR6237037.fastq.gz -o ${datadir}/SRR6237037_flg22Paer_3_h_replicate1.fastq.gz
-curl -L ${ENAftp}/006/SRR6237036/SRR6237036.fastq.gz -o ${datadir}/SRR6237036_flg22Paer_3_h_replicate2.fastq.gz
-curl -L ${ENAftp}/009/SRR6237039/SRR6237039.fastq.gz -o ${datadir}/SRR6237039_flg22Paer_3_h_replicate3.fastq.gz
-curl -L ${ENAftp}/008/SRR6237008/SRR6237008.fastq.gz -o ${datadir}/SRR6237008_flg22Paer_6_h_replicate1.fastq.gz
-curl -L ${ENAftp}/002/SRR6237032/SRR6237032.fastq.gz -o ${datadir}/SRR6237032_flg22Paer_6_h_replicate2.fastq.gz
-curl -L ${ENAftp}/003/SRR6237033/SRR6237033.fastq.gz -o ${datadir}/SRR6237033_flg22Paer_6_h_replicate3.fastq.gz
+destdir="${formdir}/projet_groupe3/data"
+mkdir -p $destdir
+
+# Controls
+for fn in `ls SRR*_Control_*.fastq.gz`; do
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
+done
+
+# flg22Paer
+for fn in `ls SRR*_flg22Paer_*.fastq.gz`; do
+  ln -s ${oridir}/${fn} ${destdir}/${fn}
+done
+
 ```
 
 <br>
@@ -3092,41 +3134,29 @@ Les échantillons sont des triplicats biologiques de :
     -   Plantes exposées à la chitine (**chitin**) à 30 min, 1h, 3h et
         6h
 
-``` r
-datadir="/shared/projects/form_2022_07/projet_groupe4/data"
-ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
+``` bash
+formdir="/shared/projects/form_2022_07"
 
-#Controls
-curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${datadir}/SRR6236998_Control_0_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${datadir}/SRR6237000_Control_0_h_replicate2.fastq.gz
-curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${datadir}/SRR6236996_Control_0_h_replicate3.fastq.gz
-curl -L ${ENAftp}/007/SRR6236997/SRR6236997.fastq.gz -o ${datadir}/SRR6236997_Control_0.5_h_replicate1.fastq.gz
-curl -L ${ENAftp}/005/SRR6236995/SRR6236995.fastq.gz -o ${datadir}/SRR6236995_Control_0.5_h_replicate2.fastq.gz
-curl -L ${ENAftp}/009/SRR6236999/SRR6236999.fastq.gz -o ${datadir}/SRR6236999_Control_0.5_h_replicate3.fastq.gz
-curl -L ${ENAftp}/000/SRR6236990/SRR6236990.fastq.gz -o ${datadir}/SRR6236990_Control_1_h_replicate3.fastq.gz
-curl -L ${ENAftp}/009/SRR6237009/SRR6237009.fastq.gz -o ${datadir}/SRR6237009_Control_1_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237010/SRR6237010.fastq.gz -o ${datadir}/SRR6237010_Control_1_h_replicate2.fastq.gz
-curl -L ${ENAftp}/002/SRR6237022/SRR6237022.fastq.gz -o ${datadir}/SRR6237022_Control_3_h_replicate1.fastq.gz
-curl -L ${ENAftp}/003/SRR6237023/SRR6237023.fastq.gz -o ${datadir}/SRR6237023_Control_3_h_replicate2.fastq.gz
-curl -L ${ENAftp}/004/SRR6237024/SRR6237024.fastq.gz -o ${datadir}/SRR6237024_Control_3_h_replicate3.fastq.gz
-curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${datadir}/SRR6237043_Control_6_h_replicate1.fastq.gz
-curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${datadir}/SRR6237042_Control_6_h_replicate2.fastq.gz
-curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${datadir}/SRR6237005_Control_6_h_replicate3.fastq.gz
+datadir="${formdir}/data_project"
+cd $datadir
 
-# Treatment with chitin
-curl -L ${ENAftp}/004/SRR6237014/SRR6237014.fastq.gz -o ${datadir}/SRR6237014_chitin_0.5_h_replicate1.fastq.gz
-curl -L ${ENAftp}/001/SRR6237011/SRR6237011.fastq.gz -o ${datadir}/SRR6237011_chitin_0.5_h_replicate2.fastq.gz
-curl -L ${ENAftp}/002/SRR6237012/SRR6237012.fastq.gz -o ${datadir}/SRR6237012_chitin_0.5_h_replicate3.fastq.gz
-curl -L ${ENAftp}/009/SRR6237019/SRR6237019.fastq.gz -o ${datadir}/SRR6237019_chitin_1_h_replicate1.fastq.gz
-curl -L ${ENAftp}/000/SRR6237020/SRR6237020.fastq.gz -o ${datadir}/SRR6237020_chitin_1_h_replicate2.fastq.gz
-curl -L ${ENAftp}/001/SRR6237021/SRR6237021.fastq.gz -o ${datadir}/SRR6237021_chitin_1_h_replicate3.fastq.gz
-curl -L ${ENAftp}/008/SRR6237038/SRR6237038.fastq.gz -o ${datadir}/SRR6237038_chitin_3_h_replicate1.fastq.gz
-curl -L ${ENAftp}/001/SRR6237041/SRR6237041.fastq.gz -o ${datadir}/SRR6237041_chitin_3_h_replicate2.fastq.gz
-curl -L ${ENAftp}/000/SRR6237040/SRR6237040.fastq.gz -o ${datadir}/SRR6237040_chitin_3_h_replicate3.fastq.gz
-curl -L ${ENAftp}/005/SRR6237045/SRR6237045.fastq.gz -o ${datadir}/SRR6237045_chitin_6_h_replicate1.fastq.gz
-curl -L ${ENAftp}/004/SRR6237044/SRR6237044.fastq.gz -o ${datadir}/SRR6237044_chitin_6_h_replicate2.fastq.gz
-curl -L ${ENAftp}/001/SRR6237031/SRR6237031.fastq.gz -o ${datadir}/SRR6237031_chitin_6_h_replicate3.fastq.gz
+destdir="${formdir}/projet_groupe3/data"
+mkdir -p $destdir
+
+# Controls
+for fn in `ls SRR*_Control_*.fastq.gz`; do
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
+done
+
+# chitin
+for fn in `ls SRR*_chitin_*.fastq.gz`; do
+  ln -s ${oridir}/${fn} ${destdir}/${fn}
+done
+
 ```
+
+Références
+----------
 
 Stringlis, I.A., Proietti, S., Hickman, R., Van Verk, M.C., Zamioudis,
 C., and Pieterse, C.M.J. (2018). Root transcriptional dynamics induced
