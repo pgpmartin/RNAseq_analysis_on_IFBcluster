@@ -3095,7 +3095,7 @@ done
 
 # flg22Psim
 for fn in `ls SRR*_flg22Psim_*.fastq.gz`; do
-  ln -s ${oridir}/${fn} ${destdir}/${fn}
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
 done
 ```
 
@@ -3140,7 +3140,7 @@ done
 
 # flg22Paer
 for fn in `ls SRR*_flg22Paer_*.fastq.gz`; do
-  ln -s ${oridir}/${fn} ${destdir}/${fn}
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
 done
 ```
 
@@ -3182,7 +3182,7 @@ done
 
 # chitin
 for fn in `ls SRR*_chitin_*.fastq.gz`; do
-  ln -s ${oridir}/${fn} ${destdir}/${fn}
+  ln -s ${datadir}/${fn} ${destdir}/${fn}
 done
 ```
 
