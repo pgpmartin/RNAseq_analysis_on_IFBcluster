@@ -2928,7 +2928,7 @@ plantes contrôles et évaluera:
     -   pour tous les temps, une représentation des gènes **BDRG** dans
         les différents échantillons sous forme de heatmap
 
-(OPTIONNEL)
+(OPTIONEL)
 
 -   à chaque temps, une analyse de l’enrichissement de catégories
     fonctionnelles parmi les gènes up- ou downrégulés
@@ -3053,6 +3053,17 @@ for fn in `ls SRR*_rhizo_*.fastq.gz`; do
 done
 ```
 
+Les dossiers que vous allez utiliser après avoir correctement défini
+`formdir` (dossier projet de la formation):
+
+``` bash
+workdir="${formdir}/projet_groupe1"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
+```
+
 <br>
 
 Groupe 2: réponse au peptide flg22 d’une rhizobactérie bénéfique
@@ -3088,6 +3099,17 @@ for fn in `ls SRR*_flg22Psim_*.fastq.gz`; do
 done
 ```
 
+Les dossiers que vous allez utiliser après avoir correctement défini
+`formdir` (dossier projet de la formation):
+
+``` bash
+workdir="${formdir}/projet_groupe2"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
+```
+
 <br>
 
 Groupe 3: réponse au peptide flg22 d’une bactérie pathogène
@@ -3120,7 +3142,17 @@ done
 for fn in `ls SRR*_flg22Paer_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
+```
 
+Les dossiers que vous allez utiliser après avoir correctement défini
+`formdir` (dossier projet de la formation):
+
+``` bash
+workdir="${formdir}/projet_groupe3"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
 ```
 
 <br>
@@ -3152,7 +3184,17 @@ done
 for fn in `ls SRR*_chitin_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
+```
 
+Les dossiers que vous allez utiliser après avoir correctement défini
+`formdir` (dossier projet de la formation):
+
+``` bash
+workdir="${formdir}/projet_groupe4"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
 ```
 
 <br>

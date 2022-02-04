@@ -215,7 +215,7 @@ Chaque groupe analysera l'un de ces 4 stimuli en le comparant aux plantes contr�
   - à chaque temps le nombre et la proportion de gènes **BDRG** qui sont uprégulés ou downrégulés, ainsi que la significativité de cet enrichissement (test exact de Fisher, diagramme de Venn)
   - pour tous les temps, une représentation des gènes **BDRG** dans les différents échantillons sous forme de heatmap
 
-(OPTIONNEL)  
+(OPTIONEL)  
 
   - à chaque temps, une analyse de l'enrichissement de catégories fonctionnelles parmi les gènes up- ou downrégulés
 
@@ -336,6 +336,16 @@ done
 ```
 
 
+Les dossiers que vous allez utiliser après avoir correctement défini `formdir` (dossier projet de la formation):
+
+```bash
+workdir="${formdir}/projet_groupe1"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
+```
+
 
 <br>
 
@@ -367,6 +377,18 @@ for fn in `ls SRR*_flg22Psim_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
 ```
+
+Les dossiers que vous allez utiliser après avoir correctement défini `formdir` (dossier projet de la formation):
+
+```bash
+workdir="${formdir}/projet_groupe2"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
+```
+
+
 <br>
 
 ## Groupe 3: réponse au peptide flg22 d'une bactérie pathogène
@@ -397,8 +419,18 @@ for fn in `ls SRR*_flg22Paer_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
 
-
 ```
+
+Les dossiers que vous allez utiliser après avoir correctement défini `formdir` (dossier projet de la formation):
+
+```bash
+workdir="${formdir}/projet_groupe3"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
+```
+
 <br>
 
 ## Groupe 4: réponse à la chitine
@@ -427,8 +459,18 @@ for fn in `ls SRR*_chitin_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
 
-
 ```
+
+Les dossiers que vous allez utiliser après avoir correctement défini `formdir` (dossier projet de la formation):
+
+```bash
+workdir="${formdir}/projet_groupe4"
+bankdir="${formdir}/bank"
+datadir="${workdir}/data"
+logdir="${workdir}/log"
+scriptdir="${workdir}/log"
+```
+
 
 <br>
 

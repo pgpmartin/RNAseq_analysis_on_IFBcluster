@@ -3128,7 +3128,7 @@ Chaque groupe analysera l’un de ces 4 stimuli en le comparant aux plantes cont
 <li>à chaque temps le nombre et la proportion de gènes <strong>BDRG</strong> qui sont uprégulés ou downrégulés, ainsi que la significativité de cet enrichissement (test exact de Fisher, diagramme de Venn)</li>
 <li>pour tous les temps, une représentation des gènes <strong>BDRG</strong> dans les différents échantillons sous forme de heatmap</li>
 </ul>
-<p>(OPTIONNEL)</p>
+<p>(OPTIONEL)</p>
 <ul>
 <li>à chaque temps, une analyse de l’enrichissement de catégories fonctionnelles parmi les gènes up- ou downrégulés</li>
 </ul>
@@ -3241,6 +3241,12 @@ done
 for fn in `ls SRR*_rhizo_*.fastq.gz`; do
   ln -s ${datadir}/${fn} ${destdir}/${fn}
 done</code></pre>
+<p>Les dossiers que vous allez utiliser après avoir correctement défini <code>formdir</code> (dossier projet de la formation):</p>
+<pre class="bash"><code>workdir=&quot;${formdir}/projet_groupe1&quot;
+bankdir=&quot;${formdir}/bank&quot;
+datadir=&quot;${workdir}/data&quot;
+logdir=&quot;${workdir}/log&quot;
+scriptdir=&quot;${workdir}/log&quot;</code></pre>
 <p><br></p>
 </div>
 <div id="groupe-2-réponse-au-peptide-flg22-dune-rhizobactérie-bénéfique" class="section level2">
@@ -3269,6 +3275,12 @@ done
 for fn in `ls SRR*_flg22Psim_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done</code></pre>
+<p>Les dossiers que vous allez utiliser après avoir correctement défini <code>formdir</code> (dossier projet de la formation):</p>
+<pre class="bash"><code>workdir=&quot;${formdir}/projet_groupe2&quot;
+bankdir=&quot;${formdir}/bank&quot;
+datadir=&quot;${workdir}/data&quot;
+logdir=&quot;${workdir}/log&quot;
+scriptdir=&quot;${workdir}/log&quot;</code></pre>
 <p><br></p>
 </div>
 <div id="groupe-3-réponse-au-peptide-flg22-dune-bactérie-pathogène" class="section level2">
@@ -3297,8 +3309,13 @@ done
 for fn in `ls SRR*_flg22Paer_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
-
 </code></pre>
+<p>Les dossiers que vous allez utiliser après avoir correctement défini <code>formdir</code> (dossier projet de la formation):</p>
+<pre class="bash"><code>workdir=&quot;${formdir}/projet_groupe3&quot;
+bankdir=&quot;${formdir}/bank&quot;
+datadir=&quot;${workdir}/data&quot;
+logdir=&quot;${workdir}/log&quot;
+scriptdir=&quot;${workdir}/log&quot;</code></pre>
 <p><br></p>
 </div>
 <div id="groupe-4-réponse-à-la-chitine" class="section level2">
@@ -3326,8 +3343,13 @@ done
 for fn in `ls SRR*_chitin_*.fastq.gz`; do
   ln -s ${oridir}/${fn} ${destdir}/${fn}
 done
-
 </code></pre>
+<p>Les dossiers que vous allez utiliser après avoir correctement défini <code>formdir</code> (dossier projet de la formation):</p>
+<pre class="bash"><code>workdir=&quot;${formdir}/projet_groupe4&quot;
+bankdir=&quot;${formdir}/bank&quot;
+datadir=&quot;${workdir}/data&quot;
+logdir=&quot;${workdir}/log&quot;
+scriptdir=&quot;${workdir}/log&quot;</code></pre>
 <p><br></p>
 </div>
 <div id="quelques-compléments-pour-vous-aider" class="section level2">
