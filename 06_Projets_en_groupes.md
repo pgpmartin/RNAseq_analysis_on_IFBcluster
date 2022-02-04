@@ -3155,6 +3155,450 @@ done
 
 ```
 
+<br>
+
+Quelques compléments pour vous aider
+------------------------------------
+
+Par rapport à ce que l’on a fait en TD, il y a plusieurs éléments qui
+diffèrent et que vous allez devoir prendre en compte pour apporter
+quelques modifications aux scripts d’analyse dont vous disposez :
+
+1.  Il va vous falloir modifier les différentes variables `workdir`,
+    `bankdir`, `datadir`, etc. contenant les chemins vers les dossiers
+    correspondants.
+
+<br>
+
+1.  Le nombre de fichiers à analyser n’est pas le même que lors du TD.
+    Quand vous lancez des **jobs arrays**, pensez donc à **modifier
+    l’étendue de l’array** (rappelez-vous aussi que le 1er indice d’un
+    array sous unix est 0).
+
+<br>
+
+1.  les données fastq ne sont pas dézippées, pour gagner de la place sur
+    le serveur.
+
+La plupart des outils bioinformatiques fonctionnent aussi bien sur des
+fichiers `fastq` non compressés que compressés (`.fastq.gz`). C’est le
+cas notamment de
+[fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).  
+Pour [STAR](https://github.com/alexdobin/STAR), utilisé pour aligner les
+reads, il est nécessaire de préciser quelle commande unix doit être
+utilisée pour afficher le contenu des fichiers. Sous Unix, la commande
+`cat` est utilisée pour envoyer le contenu d’un fichier vers la sortie
+standard `stdout` (c’est à dire en général l’afficher à l’écran si vous
+êtes sur un terminal). Pour un fichier compressé `.gz`, on utilisera la
+commande `zcat`.  
+Dans la commande `STAR` on ajoutera donc l’option
+`--readFilesCommand zcat`
+
+<br>
+
+1.  le séquençage a été fait en single end et non en paired end. On a
+    donc un seul fichier pour chaque échantillon et non deux.  
+    Il faudra donc faire attention à plusieurs choses:
+
+    -   pour `fastqc` on ne donnera qu’un seul fichier en entrée. On ne
+        créera donc qu’une seule variable `fqfile` au lieu des deux
+        variables `fqfile1` et `fqfile2` dans le script
+        `02_a_fastQC.sh`.  
+    -   pour `STAR` on ne donnera qu’un seul fichier en entrée: par
+        exemple `--readFiles Mon_Seul_Fichier.fastq.gz`. On ne créera
+        donc qu’une seule variable `fqfile` au lieu des deux variables
+        `fqfile1` et `fqfile2` dans le script `03_a_STAR_pe.sh`.  
+    -   pour filtrer les reads avec `samtools` (après la commande `STAR`
+        dans le script `03_a_STAR_pe.sh`), il ne faudra pas utiliser le
+        filtre `-f 3` qui correspond à des reads appariés. De la même
+        manière, on utilisera pas `-F 780` mais plutôt `-F 772` qui
+        n’inclue pas de contrainte sur le mapping du read apparié.
+        Référez-vous à [ce
+        site](https://broadinstitute.github.io/picard/explain-flags.html)
+        pour vérifier à quoi correspond chaque code de filtrage.  
+    -   pour le comptage des reads (scripts `05_a_featurecounts.sh`), on
+        enlèvera les options `-p`, `-B` et `-C` qui correspondent à des
+        reads appariés.
+
+<br>
+
+1.  le plan d’expérience comporte 2 facteurs (temps et traitement) qui
+    peuvent avoir plusieurs niveaux (en particulier le temps).  
+    Cela va influer sur la manière dont on réalise l’analyse
+    différentielle avec
+    [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html).
+    En pratique, pour nous simplifier l’analyse, nous allons combiner
+    ces deux facteurs pour créer un unique facteur groupe.
+
+**Exemple** : imaginons une expérience ou l’on mesure l’effet d’un
+traitement **T** par rapport à un contrôle **C**, à 3 temps: **1h**,
+**3h** et **6h**. Nous avons 3 réplicats par condition.  
+Voici un tableau avec les noms des échantillons:
+
+<table class="table" style="font-size: 12px; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+SampleName
+</th>
+<th style="text-align:left;">
+Treatment
+</th>
+<th style="text-align:left;">
+Time
+</th>
+<th style="text-align:left;">
+Replicate
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+C\_1h\_rep1
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_1h\_rep2
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_1h\_rep3
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_3h\_rep1
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_3h\_rep2
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_3h\_rep3
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_6h\_rep1
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_6h\_rep2
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C\_6h\_rep3
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_1h\_rep1
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_1h\_rep2
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_1h\_rep3
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_3h\_rep1
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_3h\_rep2
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_3h\_rep3
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_6h\_rep1
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_6h\_rep2
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T\_6h\_rep3
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+</tbody>
+</table>
+A partir de ces données, on peut créer un objet DESeq2 où l’on spécifie
+un effet “groupe” unique:
+
+``` r
+# Les facteure expérimentaux: traitement, temps et réplicats:
+treatment = rep(c("C", "T"), each = 9)
+exposureTime <- rep(rep(c("1h", "3h", "6h"), each = 3), 2)
+repli <- paste0("rep", rep(1:3, 6))
+
+# Ici, on peut directement déduire les noms des échantillons a partir de ces facteurs.
+SampleNames <- paste(treatment, exposureTime, repli, sep="_")
+# Pour vous, il faudra bien vérifier qu'il y a correspondance entre les facteurs expérimentaux et les noms des échantillons
+
+# Le facteur "groupe" qui regroupe les facteurs traitement et temps:
+GroupFactor <- factor(paste(treatment, exposureTime, sep="_"))
+
+# Autrement dit, si on veut créer GroupFactor manuellement:
+GroupFactor = factor(
+               c('C_1h', 'C_1h', 'C_1h', 
+                 'C_3h', 'C_3h', 'C_3h', 
+                 'C_6h', 'C_6h', 'C_6h', 
+                 'T_1h', 'T_1h', 'T_1h', 
+                 'T_3h', 'T_3h', 'T_3h', 
+                 'T_6h', 'T_6h', 'T_6h'))
+# Ce facteur à 6 niveaux: C-1h, C_3h, C_6h, T_1h, T_3h et T_6h
+
+#On prépare le tableau contenant les infos sur les échantillons:
+SampleData <- S4Vectors::DataFrame(SampleName = SampleNames,
+                                   condition = GroupFactor,
+                                  row.names = SampleNames)
+
+# Puis on créé l'objet DESeq2 (en remplaçant _Ma_Matrice_de_Comptage_ par la vraie matrice de comptage bien sûr...)
+dds <- DESeq2::DESeqDataSetFromMatrix(countData = _Ma_Matrice_de_Comptage_,
+                                      colData = SampleData,
+                                      design = ~ condition)
+
+#Puis on lance l'analyse DESeq2 avec cet unique effet "groupe" ou "condition"
+dds <- DESeq2::DESeq(dds)
+```
+
+Une fois l’analyse réalisée, on peut facilement extraire les
+comparaisons (ou “contrastes”) qui nous intéressent grâce à la fonction
+`results`:
+
+``` r
+# Attention à l'ordre des niveaux qui sont comparés. Ici, on veut T/C, donc on met d'abord "T" puis "C"
+Comparaison_t1h = DESeq2::results(dds, contrast=c("condition", "T_1h", "C_1h"))
+Comparaison_t3h = DESeq2::results(dds, contrast=c("condition", "T_3h", "C_3h"))
+Comparaison_t6h = DESeq2::results(dds, contrast=c("condition", "T_6h", "C_6h"))
+```
+
+Si on voulait comparer l’effet du temps chez les individus traités (3h
+vs 1h et 6h vs 1h par exemple):
+
+``` r
+Comparaison_t3h_vs_t1h = DESeq2::results(dds, contrast=c("condition", "T_3h", "T_1h"))
+Comparaison_t6h_vs_t1h = DESeq2::results(dds, contrast=c("condition", "T_3h", "T_1h"))
+```
+
+A partir de ces différentes tables on peut extraire les gènes
+différentiellement exprimés.  
+Par exemple pour la table `Comparaison_t1h`:
+
+``` r
+# Avec dplyr:
+library(dplyr)
+Regulated_Genes_At_1h <- Comparaison_t1h %>%
+                            as.data.frame %>%
+                            dplyr::filter(padj < 0.05)
+## Ou bien en ajoutant un filtre sur le log(fold-change): 
+## |log2FC|>1, i.e. changement d'un facteur 2 au minimum, en plus ou en moins
+Strongly_Regulated_Genes_At_1h <- Comparaison_t1h %>%
+                            as.data.frame %>%
+                            dplyr::filter(padj < 0.05, abs(log2FoldChange) > 1)
+
+# Sans utiliser dplyr, cea donnerait
+Regulated_Genes_At_1h <- as.data.frame(Comparaison_t1h[!is.na(Comparaison_t1h$padj) & Comparaison_t1h$padj < 0.05,])
+```
+
+Et pour récupérer uniquement les gènes **uprégulés** chez les individus
+traités à 3h par rapport aux contrôles à 3h:
+
+``` r
+Upregulated_Genes_At_3h <- Comparaison_t3h %>%
+                            as.data.frame %>%
+                            dplyr::filter(padj < 0.05, log2FoldChange > 0)
+```
+
+**Bonnes analyses !!**
+
+<br>
+
 Références
 ----------
 

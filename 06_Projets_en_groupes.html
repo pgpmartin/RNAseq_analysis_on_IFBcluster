@@ -3328,6 +3328,382 @@ for fn in `ls SRR*_chitin_*.fastq.gz`; do
 done
 
 </code></pre>
+<p><br></p>
+</div>
+<div id="quelques-compléments-pour-vous-aider" class="section level2">
+<h2>Quelques compléments pour vous aider</h2>
+<p>Par rapport à ce que l’on a fait en TD, il y a plusieurs éléments qui diffèrent et que vous allez devoir prendre en compte pour apporter quelques modifications aux scripts d’analyse dont vous disposez :</p>
+<ol style="list-style-type: decimal">
+<li>Il va vous falloir modifier les différentes variables <code>workdir</code>, <code>bankdir</code>, <code>datadir</code>, etc. contenant les chemins vers les dossiers correspondants.</li>
+</ol>
+<p><br></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Le nombre de fichiers à analyser n’est pas le même que lors du TD. Quand vous lancez des <strong>jobs arrays</strong>, pensez donc à <strong>modifier l’étendue de l’array</strong> (rappelez-vous aussi que le 1er indice d’un array sous unix est 0).</li>
+</ol>
+<p><br></p>
+<ol start="3" style="list-style-type: decimal">
+<li>les données fastq ne sont pas dézippées, pour gagner de la place sur le serveur.</li>
+</ol>
+<p>La plupart des outils bioinformatiques fonctionnent aussi bien sur des fichiers <code>fastq</code> non compressés que compressés (<code>.fastq.gz</code>). C’est le cas notamment de <a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/">fastqc</a>.<br />
+Pour <a href="https://github.com/alexdobin/STAR">STAR</a>, utilisé pour aligner les reads, il est nécessaire de préciser quelle commande unix doit être utilisée pour afficher le contenu des fichiers. Sous Unix, la commande <code>cat</code> est utilisée pour envoyer le contenu d’un fichier vers la sortie standard <code>stdout</code> (c’est à dire en général l’afficher à l’écran si vous êtes sur un terminal). Pour un fichier compressé <code>.gz</code>, on utilisera la commande <code>zcat</code>.<br />
+Dans la commande <code>STAR</code> on ajoutera donc l’option <code>--readFilesCommand zcat</code></p>
+<p><br></p>
+<ol start="4" style="list-style-type: decimal">
+<li><p>le séquençage a été fait en single end et non en paired end. On a donc un seul fichier pour chaque échantillon et non deux.<br />
+Il faudra donc faire attention à plusieurs choses:</p>
+<ul>
+<li>pour <code>fastqc</code> on ne donnera qu’un seul fichier en entrée. On ne créera donc qu’une seule variable <code>fqfile</code> au lieu des deux variables <code>fqfile1</code> et <code>fqfile2</code> dans le script <code>02_a_fastQC.sh</code>.<br />
+</li>
+<li>pour <code>STAR</code> on ne donnera qu’un seul fichier en entrée: par exemple <code>--readFiles Mon_Seul_Fichier.fastq.gz</code>. On ne créera donc qu’une seule variable <code>fqfile</code> au lieu des deux variables <code>fqfile1</code> et <code>fqfile2</code> dans le script <code>03_a_STAR_pe.sh</code>.<br />
+</li>
+<li>pour filtrer les reads avec <code>samtools</code> (après la commande <code>STAR</code> dans le script <code>03_a_STAR_pe.sh</code>), il ne faudra pas utiliser le filtre <code>-f 3</code> qui correspond à des reads appariés. De la même manière, on utilisera pas <code>-F 780</code> mais plutôt <code>-F 772</code> qui n’inclue pas de contrainte sur le mapping du read apparié. Référez-vous à <a href="https://broadinstitute.github.io/picard/explain-flags.html">ce site</a> pour vérifier à quoi correspond chaque code de filtrage.<br />
+</li>
+<li>pour le comptage des reads (scripts <code>05_a_featurecounts.sh</code>), on enlèvera les options <code>-p</code>, <code>-B</code> et <code>-C</code> qui correspondent à des reads appariés.</li>
+</ul></li>
+</ol>
+<p><br></p>
+<ol start="5" style="list-style-type: decimal">
+<li>le plan d’expérience comporte 2 facteurs (temps et traitement) qui peuvent avoir plusieurs niveaux (en particulier le temps).<br />
+Cela va influer sur la manière dont on réalise l’analyse différentielle avec <a href="http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html">DESeq2</a>. En pratique, pour nous simplifier l’analyse, nous allons combiner ces deux facteurs pour créer un unique facteur groupe.</li>
+</ol>
+<p><strong>Exemple</strong> : imaginons une expérience ou l’on mesure l’effet d’un traitement <strong>T</strong> par rapport à un contrôle <strong>C</strong>, à 3 temps: <strong>1h</strong>, <strong>3h</strong> et <strong>6h</strong>. Nous avons 3 réplicats par condition.<br />
+Voici un tableau avec les noms des échantillons:</p>
+<table class="table" style="font-size: 12px; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+SampleName
+</th>
+<th style="text-align:left;">
+Treatment
+</th>
+<th style="text-align:left;">
+Time
+</th>
+<th style="text-align:left;">
+Replicate
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+C_1h_rep1
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_1h_rep2
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_1h_rep3
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_3h_rep1
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_3h_rep2
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_3h_rep3
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_6h_rep1
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_6h_rep2
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C_6h_rep3
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_1h_rep1
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_1h_rep2
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_1h_rep3
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+1h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_3h_rep1
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_3h_rep2
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_3h_rep3
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+3h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_6h_rep1
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_6h_rep2
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T_6h_rep3
+</td>
+<td style="text-align:left;">
+T
+</td>
+<td style="text-align:left;">
+6h
+</td>
+<td style="text-align:left;">
+rep3
+</td>
+</tr>
+</tbody>
+</table>
+<p>A partir de ces données, on peut créer un objet DESeq2 où l’on spécifie un effet “groupe” unique:</p>
+<pre class="r"><code># Les facteure expérimentaux: traitement, temps et réplicats:
+treatment = rep(c(&quot;C&quot;, &quot;T&quot;), each = 9)
+exposureTime &lt;- rep(rep(c(&quot;1h&quot;, &quot;3h&quot;, &quot;6h&quot;), each = 3), 2)
+repli &lt;- paste0(&quot;rep&quot;, rep(1:3, 6))
+
+# Ici, on peut directement déduire les noms des échantillons a partir de ces facteurs.
+SampleNames &lt;- paste(treatment, exposureTime, repli, sep=&quot;_&quot;)
+# Pour vous, il faudra bien vérifier qu&#39;il y a correspondance entre les facteurs expérimentaux et les noms des échantillons
+
+# Le facteur &quot;groupe&quot; qui regroupe les facteurs traitement et temps:
+GroupFactor &lt;- factor(paste(treatment, exposureTime, sep=&quot;_&quot;))
+
+# Autrement dit, si on veut créer GroupFactor manuellement:
+GroupFactor = factor(
+               c(&#39;C_1h&#39;, &#39;C_1h&#39;, &#39;C_1h&#39;, 
+                 &#39;C_3h&#39;, &#39;C_3h&#39;, &#39;C_3h&#39;, 
+                 &#39;C_6h&#39;, &#39;C_6h&#39;, &#39;C_6h&#39;, 
+                 &#39;T_1h&#39;, &#39;T_1h&#39;, &#39;T_1h&#39;, 
+                 &#39;T_3h&#39;, &#39;T_3h&#39;, &#39;T_3h&#39;, 
+                 &#39;T_6h&#39;, &#39;T_6h&#39;, &#39;T_6h&#39;))
+# Ce facteur à 6 niveaux: C-1h, C_3h, C_6h, T_1h, T_3h et T_6h
+
+#On prépare le tableau contenant les infos sur les échantillons:
+SampleData &lt;- S4Vectors::DataFrame(SampleName = SampleNames,
+                                   condition = GroupFactor,
+                                  row.names = SampleNames)
+
+# Puis on créé l&#39;objet DESeq2 (en remplaçant _Ma_Matrice_de_Comptage_ par la vraie matrice de comptage bien sûr...)
+dds &lt;- DESeq2::DESeqDataSetFromMatrix(countData = _Ma_Matrice_de_Comptage_,
+                                      colData = SampleData,
+                                      design = ~ condition)
+
+#Puis on lance l&#39;analyse DESeq2 avec cet unique effet &quot;groupe&quot; ou &quot;condition&quot;
+dds &lt;- DESeq2::DESeq(dds)</code></pre>
+<p>Une fois l’analyse réalisée, on peut facilement extraire les comparaisons (ou “contrastes”) qui nous intéressent grâce à la fonction <code>results</code>:</p>
+<pre class="r"><code># Attention à l&#39;ordre des niveaux qui sont comparés. Ici, on veut T/C, donc on met d&#39;abord &quot;T&quot; puis &quot;C&quot;
+Comparaison_t1h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_1h&quot;, &quot;C_1h&quot;))
+Comparaison_t3h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_3h&quot;, &quot;C_3h&quot;))
+Comparaison_t6h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_6h&quot;, &quot;C_6h&quot;))</code></pre>
+<p>Si on voulait comparer l’effet du temps chez les individus traités (3h vs 1h et 6h vs 1h par exemple):</p>
+<pre class="r"><code>Comparaison_t3h_vs_t1h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_3h&quot;, &quot;T_1h&quot;))
+Comparaison_t6h_vs_t1h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_3h&quot;, &quot;T_1h&quot;))</code></pre>
+<p>A partir de ces différentes tables on peut extraire les gènes différentiellement exprimés.<br />
+Par exemple pour la table <code>Comparaison_t1h</code>:</p>
+<pre class="r"><code># Avec dplyr:
+library(dplyr)
+Regulated_Genes_At_1h &lt;- Comparaison_t1h %&gt;%
+                            as.data.frame %&gt;%
+                            dplyr::filter(padj &lt; 0.05)
+## Ou bien en ajoutant un filtre sur le log(fold-change): 
+## |log2FC|&gt;1, i.e. changement d&#39;un facteur 2 au minimum, en plus ou en moins
+Strongly_Regulated_Genes_At_1h &lt;- Comparaison_t1h %&gt;%
+                            as.data.frame %&gt;%
+                            dplyr::filter(padj &lt; 0.05, abs(log2FoldChange) &gt; 1)
+
+# Sans utiliser dplyr, cea donnerait
+Regulated_Genes_At_1h &lt;- as.data.frame(Comparaison_t1h[!is.na(Comparaison_t1h$padj) &amp; Comparaison_t1h$padj &lt; 0.05,])</code></pre>
+<p>Et pour récupérer uniquement les gènes <strong>uprégulés</strong> chez les individus traités à 3h par rapport aux contrôles à 3h:</p>
+<pre class="r"><code>Upregulated_Genes_At_3h &lt;- Comparaison_t3h %&gt;%
+                            as.data.frame %&gt;%
+                            dplyr::filter(padj &lt; 0.05, log2FoldChange &gt; 0)</code></pre>
+<p><strong>Bonnes analyses !!</strong></p>
+<p><br></p>
 </div>
 <div id="références" class="section level2 unnumbered">
 <h2 class="unnumbered">Références</h2>
