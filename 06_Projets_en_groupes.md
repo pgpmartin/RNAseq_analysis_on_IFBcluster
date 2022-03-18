@@ -3605,7 +3605,7 @@ vs 1h et 6h vs 1h par exemple):
 
 ``` r
 Comparaison_t3h_vs_t1h = DESeq2::results(dds, contrast=c("condition", "T_3h", "T_1h"))
-Comparaison_t6h_vs_t1h = DESeq2::results(dds, contrast=c("condition", "T_3h", "T_1h"))
+Comparaison_t6h_vs_t1h = DESeq2::results(dds, contrast=c("condition", "T_6h", "T_1h"))
 ```
 
 A partir de ces différentes tables on peut extraire les gènes
@@ -3624,7 +3624,7 @@ Strongly_Regulated_Genes_At_1h <- Comparaison_t1h %>%
                             as.data.frame %>%
                             dplyr::filter(padj < 0.05, abs(log2FoldChange) > 1)
 
-# Sans utiliser dplyr, cea donnerait
+# Sans utiliser dplyr, cela donnerait
 Regulated_Genes_At_1h <- as.data.frame(Comparaison_t1h[!is.na(Comparaison_t1h$padj) & Comparaison_t1h$padj < 0.05,])
 ```
 

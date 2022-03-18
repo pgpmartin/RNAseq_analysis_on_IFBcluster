@@ -3704,7 +3704,7 @@ Comparaison_t3h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T
 Comparaison_t6h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_6h&quot;, &quot;C_6h&quot;))</code></pre>
 <p>Si on voulait comparer l’effet du temps chez les individus traités (3h vs 1h et 6h vs 1h par exemple):</p>
 <pre class="r"><code>Comparaison_t3h_vs_t1h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_3h&quot;, &quot;T_1h&quot;))
-Comparaison_t6h_vs_t1h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_3h&quot;, &quot;T_1h&quot;))</code></pre>
+Comparaison_t6h_vs_t1h = DESeq2::results(dds, contrast=c(&quot;condition&quot;, &quot;T_6h&quot;, &quot;T_1h&quot;))</code></pre>
 <p>A partir de ces différentes tables on peut extraire les gènes différentiellement exprimés.<br />
 Par exemple pour la table <code>Comparaison_t1h</code>:</p>
 <pre class="r"><code># Avec dplyr:
@@ -3718,7 +3718,7 @@ Strongly_Regulated_Genes_At_1h &lt;- Comparaison_t1h %&gt;%
                             as.data.frame %&gt;%
                             dplyr::filter(padj &lt; 0.05, abs(log2FoldChange) &gt; 1)
 
-# Sans utiliser dplyr, cea donnerait
+# Sans utiliser dplyr, cela donnerait
 Regulated_Genes_At_1h &lt;- as.data.frame(Comparaison_t1h[!is.na(Comparaison_t1h$padj) &amp; Comparaison_t1h$padj &lt; 0.05,])</code></pre>
 <p>Et pour récupérer uniquement les gènes <strong>uprégulés</strong> chez les individus traités à 3h par rapport aux contrôles à 3h:</p>
 <pre class="r"><code>Upregulated_Genes_At_3h &lt;- Comparaison_t3h %&gt;%
