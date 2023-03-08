@@ -2,6 +2,7 @@
       rmarkdown::render("05_RNAseq_analysis_GSE112441.Rmd", 
                         rmarkdown::md_document(variant = "markdown_github"), 
                         output_file="05_RNAseq_analysis_GSE112441.md") -->
+
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This
 work is licensed under a
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative
@@ -12,8 +13,7 @@ nombreuses ressources en ligne pour aller plus loin. Voir par exemple ce
 [cours très
 complet](https://scienceparkstudygroup.github.io/rna-seq-lesson/).
 
-Données et mise en place
-------------------------
+## Données et mise en place
 
 *Dans ce document, les commandes de chargement des modules
 d’environnement correspondent au cluster de l’IFBcore
@@ -83,7 +83,7 @@ effectuées.
 Notre dossier partagé pour la formation est :
 
 ``` bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 ```
 
 Le dossier où nous analyserons les données:
@@ -214,8 +214,7 @@ compressés*
 
 <br>
 
-Génome, annotations et indexage
--------------------------------
+## Génome, annotations et indexage
 
 ### Assemblages et annotations
 
@@ -422,8 +421,7 @@ sbatch ${scriptdir}/01_a_STARindex.sh
 
 <br>
 
-QC sur les données brutes: [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) et [multiqc](https://multiqc.info/docs/)
-----------------------------------------------------------------------------------------------------------------------------------------
+## QC sur les données brutes: [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) et [multiqc](https://multiqc.info/docs/)
 
 Le logiciel
 [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
@@ -472,8 +470,7 @@ commande `fastqc`
 
 <br>
 
-Alignement: [STAR](https://github.com/alexdobin/STAR)
------------------------------------------------------
+## Alignement: [STAR](https://github.com/alexdobin/STAR)
 
 En général, les données de RNA-seq polyA+ ne nécessitent pas d’être
 “rognés” (*trimming* en anglais) en éliminant des extrémités de
@@ -596,8 +593,7 @@ samtools view -c <input_bam_file>
 
 <br>
 
-Fichier signal / tracks: bedgraph et bigwig
--------------------------------------------
+## Fichier signal / tracks: bedgraph et bigwig
 
 Il est important de pouvoir visualiser les résultats d’une expérience
 sur un [genome browser](https://en.wikipedia.org/wiki/Genome_browser)
@@ -674,8 +670,7 @@ sbatch ${scriptdir}/04_b_bamscale_filteredReads.sh
 
 <br>
 
-Comptage: [featurecounts](http://subread.sourceforge.net/)
-----------------------------------------------------------
+## Comptage: [featurecounts](http://subread.sourceforge.net/)
 
 L’étape suivante consiste à compter le nombre de reads qui s’alignent
 correctement sur les gènes annotés.  
@@ -737,7 +732,7 @@ le serveur frontal :
 # R
 
 # définir le répertoire de travail:
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/fcount" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/fcount" 
 setwd(projPath)
 
 #lister les fichiers de comptage:
@@ -781,8 +776,7 @@ write.table(ctgn,
 
 <br>
 
-Analyse différentielle: [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html)
-----------------------------------------------------------------------------------------------------
+## Analyse différentielle: [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html)
 
 L’analyse différentielle (i.e. l’identification des gènes
 différentiellement exprimés entre les individus `bdrs` et les individus
@@ -798,7 +792,7 @@ différentiellement exprimés entre les individus `bdrs` et les individus
 options(width=160)
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #charger les librairies
@@ -864,8 +858,7 @@ c’est à dire qui sont exprimés plus fortement chez les triples mutants
 
 <br>
 
-Enrichissement de catégories fonctionnelles
--------------------------------------------
+## Enrichissement de catégories fonctionnelles
 
 Nous aimerions savoir si parmi les gènes **uprégulés** certaines
 fonctions biologiques sont sur-représentées.  
@@ -920,7 +913,7 @@ Pour effectuer un test exact de Fisher nous avons besoin:
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #autoriser plus de colonnes à s'afficher
@@ -988,7 +981,7 @@ regroupent sur un plan sémantique.
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 # Chargement du pakage
@@ -1016,8 +1009,7 @@ simplifyGO(mat, method = "kmeans", control = list(max_k = 10))
 
 <br>
 
-Heatmaps
---------
+## Heatmaps
 
 ``` r
 # srun --time=04:00:00 --cpus-per-task=2 --mem-per-cpu=8G --pty bash
@@ -1025,7 +1017,7 @@ Heatmaps
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #autoriser plus de colonnes à s'afficher
@@ -1062,54 +1054,60 @@ ComplexHeatmap::Heatmap(vstmat_scr[goi,],
 
 ![](img/Heatmap_RegulatedGenes.png)
 
-References
-----------
+## References
 
 Dobin, A., Davis, C.A., Schlesinger, F., Drenkow, J., Zaleski, C., Jha,
-S., Batut, P., Chaisson, M., and Gingeras, T.R. (2013). STAR: ultrafast
-universal RNA-seq aligner. Bioinformatics *29*, 15–21.
+S., Batut, P., Chaisson, M., and Gingeras, T.R. (2013).
+<span class="nocase">STAR: ultrafast universal RNA-seq aligner</span>.
+Bioinformatics *29*, 15–21.
 
-Kim, D., Langmead, B., and Salzberg, S.L. (2015). HISAT: a fast spliced
-aligner with low memory requirements. Nat. Methods *12*, 357–360.
+Kim, D., Langmead, B., and Salzberg, S.L. (2015).
+<span class="nocase">HISAT: a fast spliced aligner with low memory
+requirements</span>. Nat. Methods *12*, 357–360.
 
 Kim, D., Paggi, J.M., Park, C., Bennett, C., and Salzberg, S.L. (2019).
-Graph-based genome alignment and genotyping with HISAT2 and
-HISAT-genotype. Nat Biotechnol *37*, 907–915.
+<span class="nocase">Graph-based genome alignment and genotyping with
+HISAT2 and HISAT-genotype</span>. Nat Biotechnol *37*, 907–915.
 
-Liao, Y., Smyth, G.K., and Shi, W. (2013). The Subread aligner: fast,
-accurate and scalable read mapping by seed-and-vote. Nucleic Acids Res
-*41*, e108.
+Liao, Y., Smyth, G.K., and Shi, W. (2013). <span class="nocase">The
+Subread aligner: fast, accurate and scalable read mapping by
+seed-and-vote</span>. Nucleic Acids Res *41*, e108.
 
-Liao, Y., Smyth, G.K., and Shi, W. (2019). The R package Rsubread is
-easier, faster, cheaper and better for alignment and quantification of
-RNA sequencing reads. Nucleic Acids Res *47*, e47.
+Liao, Y., Smyth, G.K., and Shi, W. (2019). <span class="nocase">The R
+package Rsubread is easier, faster, cheaper and better for alignment and
+quantification of RNA sequencing reads</span>. Nucleic Acids Res *47*,
+e47.
 
 Mootha, V.K., Lindgren, C.M., Eriksson, K.F., Subramanian, A., Sihag,
 S., Lehar, J., Puigserver, P., Carlsson, E., Ridderstråle, M., Laurila,
-E., et al. (2003). PGC-1alpha-responsive genes involved in oxidative
-phosphorylation are coordinately downregulated in human diabetes. Nat
-Genet *34*, 267–273.
+E., et al. (2003). <span class="nocase">PGC-1alpha-responsive genes
+involved in oxidative phosphorylation are coordinately downregulated in
+human diabetes</span>. Nat Genet *34*, 267–273.
 
 Pertea, M., Kim, D., Pertea, G.M., Leek, J.T., and Salzberg, S.L.
-(2016). Transcript-level expression analysis of RNA-seq experiments with
-HISAT, StringTie and Ballgown. Nat Protoc *11*, 1650–1667.
+(2016). <span class="nocase">Transcript-level expression analysis of
+RNA-seq experiments with HISAT, StringTie and Ballgown</span>. Nat
+Protoc *11*, 1650–1667.
 
 Pongor, L.S., Gross, J.M., Vera Alvarez, R., Murai, J., Jang, S.M.,
 Zhang, H., Redon, C., Fu, H., Huang, S.Y., Thakur, B., et al. (2020).
-BAMscale: quantification of next-generation sequencing peaks and
-generation of scaled coverage tracks. Epigenetics Chromatin *13*, 21.
+<span class="nocase">BAMscale: quantification of next-generation
+sequencing peaks and generation of scaled coverage tracks</span>.
+Epigenetics Chromatin *13*, 21.
 
 Subramanian, A., Tamayo, P., Mootha, V.K., Mukherjee, S., Ebert, B.L.,
 Gillette, M.A., Paulovich, A., Pomeroy, S.L., Golub, T.R., Lander, E.S.,
-et al. (2005). Gene set enrichment analysis: a knowledge-based approach
-for interpreting genome-wide expression profiles. Proc Natl Acad Sci U S
-A *102*, 15545–15550.
+et al. (2005). <span class="nocase">Gene set enrichment analysis: a
+knowledge-based approach for interpreting genome-wide expression
+profiles</span>. Proc Natl Acad Sci U S A *102*, 15545–15550.
 
-Yu, X., Martin, P.G.P., and Michaels, S.D. (2019). BORDER proteins
-protect expression of neighboring genes by promoting 3’ Pol II pausing
-in plants. Nat Commun *10*, 4359.
+Yu, X., Martin, P.G.P., and Michaels, S.D. (2019).
+<span class="nocase">BORDER proteins protect expression of neighboring
+genes by promoting 3’ Pol II pausing in plants</span>. Nat Commun *10*,
+4359.
 
 Yu, X., Martin, P.G.P., Zhang, Y., Trinidad, J.C., Xu, F., Huang, J.,
-Thum, K.E., Li, K., Zhao, S., Gu, Y., et al. (2021). The BORDER family
-of negative transcription elongation factors regulates flowering time in
-Arabidopsis. Curr Biol *31*, 5377–5384.
+Thum, K.E., Li, K., Zhao, S., Gu, Y., et al. (2021).
+<span class="nocase">The BORDER family of negative transcription
+elongation factors regulates flowering time in Arabidopsis</span>. Curr
+Biol *31*, 5377–5384.

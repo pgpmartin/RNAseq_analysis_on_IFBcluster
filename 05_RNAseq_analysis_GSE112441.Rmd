@@ -66,7 +66,7 @@ On commence par préparer les dossiers dans lesquels les analyses seront effectu
 Notre dossier partagé pour la formation est :
 
 ```bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 ```
 
 Le dossier où nous analyserons les données:
@@ -549,7 +549,7 @@ Ces commandes utilisant très peu de ressources peuvent être lancées sur le se
 # R
 
 # définir le répertoire de travail:
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/fcount" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/fcount" 
 setwd(projPath)
 
 #lister les fichiers de comptage:
@@ -607,7 +607,7 @@ L'analyse différentielle (i.e. l'identification des gènes différentiellement 
 options(width=160)
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #charger les librairies
@@ -701,7 +701,7 @@ Pour effectuer un test exact de Fisher nous avons besoin:
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #autoriser plus de colonnes à s'afficher
@@ -765,7 +765,7 @@ dotplot(ego, showCategory = 10)
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 # Chargement du pakage
@@ -802,7 +802,7 @@ simplifyGO(mat, method = "kmeans", control = list(max_k = 10))
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #autoriser plus de colonnes à s'afficher

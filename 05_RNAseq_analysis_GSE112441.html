@@ -60,6 +60,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 /* for pandoc --citeproc since 2.11 */
 div.csl-bib-body { }
@@ -107,6 +108,9 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
 pre code {
   padding: 0;
 }
@@ -126,8 +130,8 @@ pre code {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -135,16 +139,9 @@ pre code {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -310,7 +307,7 @@ L’<strong>European Nucleotide Archive</strong> (<a href="https://www.ebi.ac.uk
 <h4>Dossiers utilisés:</h4>
 <p>On commence par préparer les dossiers dans lesquels les analyses seront effectuées.<br />
 Notre dossier partagé pour la formation est :</p>
-<pre class="bash"><code>formdir=&quot;/shared/projects/form_2022_07&quot;</code></pre>
+<pre class="bash"><code>formdir=&quot;/shared/projects/2306_bioinfo_rnaseq_m1&quot;</code></pre>
 <p>Le dossier où nous analyserons les données:</p>
 <pre class="bash"><code>workdir=&quot;${formdir}/TD_RNAseq&quot;</code></pre>
 <p>Création des différents dossiers que nous utiliserons pour les analyses :</p>
@@ -650,7 +647,7 @@ Ces commandes utilisant très peu de ressources peuvent être lancées sur le se
 # R
 
 # définir le répertoire de travail:
-projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/fcount&quot; 
+projPath &lt;- &quot;/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/fcount&quot; 
 setwd(projPath)
 
 #lister les fichiers de comptage:
@@ -703,7 +700,7 @@ write.table(ctgn,
 options(width=160)
 
 # définir le répertoire de travail
-projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/RData&quot; 
+projPath &lt;- &quot;/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData&quot; 
 setwd(projPath)
 
 #charger les librairies
@@ -788,7 +785,7 @@ Il ne doit pas être confondu avec l’analyse d’enrichissement de sets de gè
 # R
 
 # définir le répertoire de travail
-projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/RData&quot; 
+projPath &lt;- &quot;/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData&quot; 
 setwd(projPath)
 
 #autoriser plus de colonnes à s&#39;afficher
@@ -837,7 +834,7 @@ saveRDS(ego, &quot;EnrichGOBP_upregulatedGenes.rds&quot;)</code></pre>
 # R
 
 # définir le répertoire de travail
-projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/RData&quot; 
+projPath &lt;- &quot;/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData&quot; 
 setwd(projPath)
 
 # Chargement du pakage
@@ -869,7 +866,7 @@ simplifyGO(mat, method = &quot;kmeans&quot;, control = list(max_k = 10))</code><
 # R
 
 # définir le répertoire de travail
-projPath &lt;- &quot;/shared/projects/form_2022_07/TD_RNAseq/results/RData&quot; 
+projPath &lt;- &quot;/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData&quot; 
 setwd(projPath)
 
 #autoriser plus de colonnes à s&#39;afficher
