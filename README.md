@@ -1,11 +1,10 @@
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-Master B2AS - UE NGS Applications
+Analyse de données RNA-seq sur le cluster de calcul de l'IFB
 ==================================
 
-
-Matériel pédagogique pour l'UE **NGS application** du master [B2AS](https://www.master-bio-agro-bordeaux.com/)  
-
+Ce projet a été développé pour un enseignement sur les **Applications du NGS** dans le cadre du master [B2AS](https://www.master-bio-agro-bordeaux.com/).  
+Ce dépôt contient les documents pédagogiques suivants:
 
 # Créer votre compte sur la plateforme IFB core
 [01\_CreationCompteIFBcore](01_CreationCompteIFBcore.md)  
