@@ -19,7 +19,7 @@ En fonction des demandes soumises à la plateforme, le traitement de vos demande
 A ce stade, il vous est possible de vous connecter à votre compte via SSH (voir document "Comment interagir avec la plateforme IFB core?") mais il est nécessaire de créer ou joindre un projet pour commencer à analyser des données.
 
 
-# Joindre le projet form_2022_07
+# Joindre le projet 2306_bioinfo_rnaseq_m1
 
 Nous utiliserons le projet `2306_bioinfo_rnaseq_m1` que j'ai déjà créé pour analyser nos données.  
 Il vous suffit donc de me transmettre votre login (= username = user id ; pas votre mot de passe!) pour que je puisse vous ajouter à ce projet.  
@@ -34,7 +34,7 @@ J'ai créé plusieurs sous-dossiers dans ce répertoire:
 &nbsp;&nbsp;&nbsp;&nbsp;└── `TD_RNAseq`  
 
 Le dossier `TD_RNAseq` nous servira à analyser un jeu de données ensemble.  
-Vous utiliserez les autres sous-dossiers pour les projets en sous-groupe.  Vous auez les droits d'écriture et de lecture sur ces sous-dossier.  
+Si vou ssouhaitez vous entrainer à analyser des données, vous pourrez utiliser les autres sous-dossiers pour des projets d'analyse en sous-groupe.  Vous avez les droits d'écriture et de lecture sur ces sous-dossiers.  
 
 
 # Créer un projet pour analyser vos données dans le futur
