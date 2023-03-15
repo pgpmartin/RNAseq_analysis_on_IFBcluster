@@ -48,7 +48,8 @@ Après avoir installé Putty:
 
   - Une fois la configuration effectuée, cliquer sur `Open` pour lancer une session.  
   - Accepter l'enregistrement de l'empreinte du serveur.  
-  - Enfin, entrer username et password pour se connecter au serveur frontal.
+  - Enfin, entrer username et password pour se connecter au serveur frontal.  
+  **Remarque:** *Rien ne s'affiche quand vous entrez votre mot de passe. C'est normal, c'est une sécurité. Votre mot de passe est bien pris en compte. Tapez-le puis validez avec ENTREE et vous devriez être connecté au serveur (sauf faute de frappe... dans ce cas essayez à nouveau!)*
  
 
 # Visualiser des images

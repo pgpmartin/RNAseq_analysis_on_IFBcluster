@@ -9,11 +9,15 @@
 #SBATCH --mem-per-cpu=8G
 
 #Aim: setup the folder with the material necessary to do the course
-formdir="/shared/projects/form_2022_07"
+projectName="2306_bioinfo_rnaseq_m1"
+#~ formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/${projectName}"
 
 # Clone git repo
+githubRepo="RNAseq_analysis_on_IFBcluster"
 cd $formdir
-git clone https://github.com/pgpmartin/Master_B2AS_UE_NGS
+#~ git clone https://github.com/pgpmartin/Master_B2AS_UE_NGS
+git clone https://github.com/pgpmartin/${githubRepo}.git
 
 ###----------------
 ### TD RNA-seq
@@ -48,7 +52,8 @@ ln -s $datadir ${formdir}/data
 
 ##--------
 ## scripts
-cp ${formdir}/Master_B2AS_UE_NGS/scripts/*.sh ${scriptdir}/
+#~ cp ${formdir}/Master_B2AS_UE_NGS/scripts/*.sh ${scriptdir}/
+cp ${formdir}/${githubRepo}/scripts/*.sh ${scriptdir}/
 chmod 750 ${scriptdir}/*.sh
 
 ##--------
@@ -72,8 +77,16 @@ curl -L $enaFolder/007/SRR6908897/SRR6908897_2.fastq.gz -o GSE112441_bdrs_rep2_R
 curl -L $enaFolder/005/SRR6908885/SRR6908885_1.fastq.gz -o GSE112441_WT_rep2_R1.fastq.gz
 curl -L $enaFolder/005/SRR6908885/SRR6908885_2.fastq.gz -o GSE112441_WT_rep2_R2.fastq.gz
 
+#Obtention/vérification des signatures md5
+#~ md5sum *.fastq.gz > md5_fqgz.txt
+#~ md5sum -c md5_fqgz.txt
+
 # decompression des fichiers
 gunzip $datadir/*.fastq.gz
+
+#Obtention/vérification des signatures md5
+#~ md5sum *.fastq > md5_fq.txt
+#~ md5sum -c md5_fq.txt
 
 ##--------
 # FASTA sequence
@@ -145,7 +158,7 @@ mkdir -p ${projectDataDir}
 
 ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
 
-#Controls
+#Controls (15 fichiers)
 curl -L ${ENAftp}/008/SRR6236998/SRR6236998.fastq.gz -o ${projectDataDir}/SRR6236998_Control_0_h_replicate1.fastq.gz
 curl -L ${ENAftp}/000/SRR6237000/SRR6237000.fastq.gz -o ${projectDataDir}/SRR6237000_Control_0_h_replicate2.fastq.gz
 curl -L ${ENAftp}/006/SRR6236996/SRR6236996.fastq.gz -o ${projectDataDir}/SRR6236996_Control_0_h_replicate3.fastq.gz
@@ -162,7 +175,7 @@ curl -L ${ENAftp}/003/SRR6237043/SRR6237043.fastq.gz -o ${projectDataDir}/SRR623
 curl -L ${ENAftp}/002/SRR6237042/SRR6237042.fastq.gz -o ${projectDataDir}/SRR6237042_Control_6_h_replicate2.fastq.gz
 curl -L ${ENAftp}/005/SRR6237005/SRR6237005.fastq.gz -o ${projectDataDir}/SRR6237005_Control_6_h_replicate3.fastq.gz
 
-#Beneficial rhizobacteria Pseudomonas simiae WCS417
+#Beneficial rhizobacteria Pseudomonas simiae WCS417 (12 fichiers)
 curl -L ${ENAftp}/003/SRR6236993/SRR6236993.fastq.gz -o ${projectDataDir}/SRR6236993_rhizo_0.5_h_replicate1.fastq.gz
 curl -L ${ENAftp}/004/SRR6236994/SRR6236994.fastq.gz -o ${projectDataDir}/SRR6236994_rhizo_0.5_h_replicate2.fastq.gz
 curl -L ${ENAftp}/001/SRR6237001/SRR6237001.fastq.gz -o ${projectDataDir}/SRR6237001_rhizo_0.5_h_replicate3.fastq.gz
@@ -176,7 +189,7 @@ curl -L ${ENAftp}/006/SRR6237006/SRR6237006.fastq.gz -o ${projectDataDir}/SRR623
 curl -L ${ENAftp}/003/SRR6237003/SRR6237003.fastq.gz -o ${projectDataDir}/SRR6237003_rhizo_6_h_replicate2.fastq.gz
 curl -L ${ENAftp}/004/SRR6237004/SRR6237004.fastq.gz -o ${projectDataDir}/SRR6237004_rhizo_6_h_replicate3.fastq.gz
 
-#flg22 from beneficial rhizobacteria Pseudomonas simiae WCS417
+#flg22 from beneficial rhizobacteria Pseudomonas simiae WCS417 (12 fichiers)
 curl -L ${ENAftp}/002/SRR6237002/SRR6237002.fastq.gz -o ${projectDataDir}/SRR6237002_flg22Psim_0.5_h_replicate1.fastq.gz
 curl -L ${ENAftp}/007/SRR6237017/SRR6237017.fastq.gz -o ${projectDataDir}/SRR6237017_flg22Psim_0.5_h_replicate2.fastq.gz
 curl -L ${ENAftp}/008/SRR6237018/SRR6237018.fastq.gz -o ${projectDataDir}/SRR6237018_flg22Psim_0.5_h_replicate3.fastq.gz
@@ -190,7 +203,7 @@ curl -L ${ENAftp}/000/SRR6237030/SRR6237030.fastq.gz -o ${projectDataDir}/SRR623
 curl -L ${ENAftp}/009/SRR6237029/SRR6237029.fastq.gz -o ${projectDataDir}/SRR6237029_flg22Psim_6_h_replicate2.fastq.gz
 curl -L ${ENAftp}/007/SRR6237007/SRR6237007.fastq.gz -o ${projectDataDir}/SRR6237007_flg22Psim_6_h_replicate3.fastq.gz
 
-#flg22 from pathogenic Pseudomonas aeruginosa
+#flg22 from pathogenic Pseudomonas aeruginosa (12 fichiers)
 curl -L ${ENAftp}/005/SRR6237015/SRR6237015.fastq.gz -o ${projectDataDir}/SRR6237015_flg22Paer_0.5_h_replicate1.fastq.gz
 curl -L ${ENAftp}/006/SRR6237016/SRR6237016.fastq.gz -o ${projectDataDir}/SRR6237016_flg22Paer_0.5_h_replicate2.fastq.gz
 curl -L ${ENAftp}/003/SRR6237013/SRR6237013.fastq.gz -o ${projectDataDir}/SRR6237013_flg22Paer_0.5_h_replicate3.fastq.gz
@@ -204,7 +217,7 @@ curl -L ${ENAftp}/008/SRR6237008/SRR6237008.fastq.gz -o ${projectDataDir}/SRR623
 curl -L ${ENAftp}/002/SRR6237032/SRR6237032.fastq.gz -o ${projectDataDir}/SRR6237032_flg22Paer_6_h_replicate2.fastq.gz
 curl -L ${ENAftp}/003/SRR6237033/SRR6237033.fastq.gz -o ${projectDataDir}/SRR6237033_flg22Paer_6_h_replicate3.fastq.gz
 
-# Treatment with chitin
+# Treatment with chitin  (12 fichiers)
 curl -L ${ENAftp}/004/SRR6237014/SRR6237014.fastq.gz -o ${projectDataDir}/SRR6237014_chitin_0.5_h_replicate1.fastq.gz
 curl -L ${ENAftp}/001/SRR6237011/SRR6237011.fastq.gz -o ${projectDataDir}/SRR6237011_chitin_0.5_h_replicate2.fastq.gz
 curl -L ${ENAftp}/002/SRR6237012/SRR6237012.fastq.gz -o ${projectDataDir}/SRR6237012_chitin_0.5_h_replicate3.fastq.gz
@@ -217,6 +230,11 @@ curl -L ${ENAftp}/000/SRR6237040/SRR6237040.fastq.gz -o ${projectDataDir}/SRR623
 curl -L ${ENAftp}/005/SRR6237045/SRR6237045.fastq.gz -o ${projectDataDir}/SRR6237045_chitin_6_h_replicate1.fastq.gz
 curl -L ${ENAftp}/004/SRR6237044/SRR6237044.fastq.gz -o ${projectDataDir}/SRR6237044_chitin_6_h_replicate2.fastq.gz
 curl -L ${ENAftp}/001/SRR6237031/SRR6237031.fastq.gz -o ${projectDataDir}/SRR6237031_chitin_6_h_replicate3.fastq.gz
+
+#Obtention/vérification des signatures md5
+#~ md5sum *.fastq.gz > md5_fqgz_projects.txt
+#~ md5sum -c md5_fqgz_projects.txt
+
 
 ##--------
 ## Create projects folder with corresponding symlinks
