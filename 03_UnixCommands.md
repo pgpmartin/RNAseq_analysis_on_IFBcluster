@@ -70,7 +70,7 @@ cp \
 ```
 
 <br>
-Pour certaines options, on dispose d'**abbréviations**. La version "longue" est précédée d'un double tiret `--` alors que la version courte est précédée d'un tiret unique `-`.  
+Pour certaines options, on dispose d'**abbréviations** : La version "longue" est précédée d'un double tiret `--` alors que la version courte est précédée d'un tiret unique `-`.  
 Ainsi `ls --all` (l'option affiche tous les fichiers, y compris les fichiers "cachés" qui sont, sous unix, précédés par un point `.`) est parfaitement équivalent à `ls -a`  
 
 <br>
@@ -451,7 +451,7 @@ TZ='Europe/London' date #On change la variable TZ puis on affiche la date
 echo $TZ #la variable d'environnement TZ n'a pas été modifiée
 ```
 
-Enfin, le fichier `~/.bashrc` est lu à chaque démarrage d'un 
+Enfin, le fichier `~/.bashrc` est lu à chaque démarrage d'un terminal et peut contenir ou modifier des variables.
 
 ### Exemple: la variable PATH  
 La variable `PATH` contient la liste des répertoires dans lesquels le système cherche un programme à exécuter. Les répertoires sont séparés par le signe `:`.  
@@ -483,7 +483,7 @@ ou bien directement:
 export PATH="$PATH":~/Softwares
 ```
 
-### Quelques autres variables d'environement
+### Quelques autres variables d'environnement
 
   - `HOME` contient le chemin du répertoire home. Voir `echo $HOME`
   - `USER` contient le nom d'utilisateur. Parfois aussi `USERNAME` et `LOGNAME`.

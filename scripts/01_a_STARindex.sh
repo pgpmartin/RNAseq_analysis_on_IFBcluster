@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=form_2022_07
 #SBATCH --job-name=starIndex
-#SBATCH --output=/shared/projects/form_2022_07/TD_RNAseq/log/01_a_STARindex_%j.out
-#SBATCH --error=/shared/projects/form_2022_07/TD_RNAseq/log/01_a_STARindex_%j.err
+#SBATCH --output=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/01_a_STARindex_%j.out
+#SBATCH --error=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/01_a_STARindex_%j.err
 #SBATCH --time=06:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -15,7 +15,7 @@ module load star/2.7.9a
 nthreads=${SLURM_CPUS_PER_TASK}
 
 #Nom de l'échantillon
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 workdir="${formdir}/TD_RNAseq"
 bankdir="${workdir}/bank"
 

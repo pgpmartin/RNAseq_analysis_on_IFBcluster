@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --account=form_2022_07
+#SBATCH --account=2306_bioinfo_rnaseq_m1
 #SBATCH --job-name=multiqc
-#SBATCH --output=/shared/projects/form_2022_07/TD_RNAseq/log/03_b_MultiQC_star_%j.out
-#SBATCH --error=/shared/projects/form_2022_07/TD_RNAseq/log/03_b_MultiQC_star_%j.err
+#SBATCH --output=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/03_b_MultiQC_star_%j.out
+#SBATCH --error=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/03_b_MultiQC_star_%j.err
 #SBATCH --time=00:30:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -12,7 +12,7 @@
 module load multiqc/1.11
 
 #répertoire de travail
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 workdir="${formdir}/TD_RNAseq"
 
 #repertoire à analyser

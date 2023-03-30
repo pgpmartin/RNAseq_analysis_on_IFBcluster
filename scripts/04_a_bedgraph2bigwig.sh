@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --account=form_2022_07
+#SBATCH --account=2306_bioinfo_rnaseq_m1
 #SBATCH --job-name=bg2bw
-#SBATCH --output=/shared/projects/form_2022_07/TD_RNAseq/log/04_a_bedgraph2bigwig_%A_%a.out
-#SBATCH --error=/shared/projects/form_2022_07/TD_RNAseq/log/04_a_bedgraph2bigwig_%A_%a.err
+#SBATCH --output=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/04_a_bedgraph2bigwig_%A_%a.out
+#SBATCH --error=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/04_a_bedgraph2bigwig_%A_%a.err
 #SBATCH --array=0-5
 #SBATCH --time=00:30:00
 #SBATCH --ntasks=1
@@ -14,7 +14,7 @@
 module load ucsc-bedgraphtobigwig/377
 
 #Nom de l'échantillon
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 workdir="${formdir}/TD_RNAseq"
 bankdir="${workdir}/bank"
 
