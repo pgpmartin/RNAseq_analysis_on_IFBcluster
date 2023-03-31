@@ -234,7 +234,7 @@ Afin d'alléger au maximum les commandes `sbatch` et de garder une traçabilité
 Un exemple de script :
 
 ```bash
-# !/bin/bash
+#!/bin/bash
 #SBATCH --time=00:00:30  #30s job time limit
 #SBATCH -J Hello_World #job name
 #SBATCH --output=output_%j.out #output file name
@@ -242,6 +242,7 @@ Un exemple de script :
 #SBATCH --mem=100K #memory reservation
 #SBATCH --cpus-per-task=2 #ncpu on the same node
 #SBATCH --mail-type=BEGIN,END,FAIL 
+#SBATCH --mail-user=monAdresseMail@youpi.fr 
 
 echo "Hello World!"
 ```
