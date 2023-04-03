@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=2306_bioinfo_rnaseq_m1
+#SBATCH --account=<IFB_project_name>
 #SBATCH --job-name=<MyJOB>
 #SBATCH --output=</Path/to/outputFile_%A_%a.out>
 #SBATCH --error=</Path/to/errorFile_%A_%a.err>

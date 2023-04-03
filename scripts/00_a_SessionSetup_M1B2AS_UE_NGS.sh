@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --account=form_2022_07
+#SBATCH --account=2306_bioinfo_rnaseq_m1
 #SBATCH --job-name=SetupSession
-#SBATCH --output=/shared/projects/form_2022_07/log/00_a_SetupSession_M1B2AS_UE_NGS_%j.out
-#SBATCH --error=/shared/projects/form_2022_07/log/00_a_SetupSession_M1B2AS_UE_NGS_%j.err
+#SBATCH --output=/shared/projects/2306_bioinfo_rnaseq_m1/log/00_a_SetupSession_M1B2AS_UE_NGS_%j.out
+#SBATCH --error=/shared/projects/2306_bioinfo_rnaseq_m1/log/00_a_SetupSession_M1B2AS_UE_NGS_%j.err
 #SBATCH --time=18:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2

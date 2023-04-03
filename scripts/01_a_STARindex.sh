@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=form_2022_07
+#SBATCH --account=2306_bioinfo_rnaseq_m1
 #SBATCH --job-name=starIndex
 #SBATCH --output=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/01_a_STARindex_%j.out
 #SBATCH --error=/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/log/01_a_STARindex_%j.err
