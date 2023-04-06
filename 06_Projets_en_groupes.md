@@ -3167,7 +3167,7 @@ formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 datadir="${formdir}/data_project"
 cd $datadir
 
-destdir="${formdir}/projet_groupe3/data"
+destdir="${formdir}/projet_groupe4/data"
 mkdir -p $destdir
 
 # Controls
