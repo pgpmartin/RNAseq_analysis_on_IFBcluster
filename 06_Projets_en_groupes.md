@@ -2,8 +2,8 @@
       rmarkdown::render("06_Projets_en_groupes.Rmd", 
                         rmarkdown::md_document(variant = "markdown_github"), 
                         output_file="06_Projets_en_groupes.md") -->
-Introduction: BORDER-regulated defense genes (**BDRG**)
--------------------------------------------------------
+
+## Introduction: BORDER-regulated defense genes (**BDRG**)
 
 Au cours de l’analyse des données
 [GSE112441](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112441)
@@ -19,7 +19,7 @@ Nous pouvons récupérér la liste de ces gènes ainsi:
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 # chargement des packages
@@ -45,7 +45,7 @@ ainsi:
 
 ``` r
 # Répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #Librairies
@@ -490,6 +490,7 @@ response to jasmonic acid
 </tr>
 </tbody>
 </table>
+
 Parmi ces termes, nous sélectionnons ceux que l’on estime relever de ces
 réponses de défense:
 
@@ -1001,7 +1002,7 @@ ATLOX4,LOX4
 AT1G74930
 </td>
 <td style="text-align:center;">
-ORA47
+ERF018,ORA47
 </td>
 <td style="text-align:left;">
 3.25
@@ -2095,7 +2096,7 @@ DVL10,RTFL12
 AT4G17500
 </td>
 <td style="text-align:center;">
-AtERF\#100,ATERF-1,ERF-1,ERF1A
+AtERF#100,ATERF-1,ERF-1,ERF100,ERF1A
 </td>
 <td style="text-align:left;">
 1.04
@@ -2690,7 +2691,7 @@ ATH3,ATTRX3,ATTRXH3,TRX3,TRXH3
 AT5G44585
 </td>
 <td style="text-align:center;">
-NA
+PROSCOOP12
 </td>
 <td style="text-align:left;">
 1.52
@@ -2871,6 +2872,7 @@ RHS19
 </tr>
 </tbody>
 </table>
+
 <br> <br>
 
 Nous avons donc identifié un ensemble de 135 gènes impliqués dans des
@@ -2885,8 +2887,7 @@ expérience publiée impliquant ce type de stress.
 
 <br>
 
-Présentation des données
-------------------------
+## Présentation des données
 
 Nous allons travailler sur des données publiées dans un article de
 [Plant J en 2018](https://pubmed.ncbi.nlm.nih.gov/29024173/) (Stringlis
@@ -2903,6 +2904,7 @@ des plantes:
 
 1.  flg22 provenant de la rhizobactérie bénéfique Pseudomonas simiae
     WCS417 (**“flg22Psim”**)  
+
 2.  flg22 provenant de la bactérie pathogène Pseudomonas aeruginosa
     (**“flg22Paer”**)
 
@@ -2922,11 +2924,11 @@ plantes contrôles et évaluera:
 -   à chaque temps, le nombre gènes uprégulés ou downrégulés dans les
     racines de plantes exposées au stimulus par rapport aux plantes
     contrôles (DESeq2)
-    -   à chaque temps le nombre et la proportion de gènes **BDRG** qui
-        sont uprégulés ou downrégulés, ainsi que la significativité de
-        cet enrichissement (test exact de Fisher, diagramme de Venn)
-    -   pour tous les temps, une représentation des gènes **BDRG** dans
-        les différents échantillons sous forme de heatmap
+-   à chaque temps le nombre et la proportion de gènes **BDRG** qui sont
+    uprégulés ou downrégulés, ainsi que la significativité de cet
+    enrichissement (test exact de Fisher, diagramme de Venn)
+-   pour tous les temps, une représentation des gènes **BDRG** dans les
+    différents échantillons sous forme de heatmap
 
 (OPTIONEL)
 
@@ -2935,14 +2937,13 @@ plantes contrôles et évaluera:
 
 <br>
 
-Téléchargement des données
---------------------------
+## Téléchargement des données
 
 Les données de l’ensemble de l’étude sont stockées dans un dossier nommé
 `data_project`
 
 ``` bash
-datadir="/shared/projects/form_2022_07/data_project"
+datadir="/shared/projects/2306_bioinfo_rnaseq_m1/data_project"
 ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
 
 #Controls
@@ -3024,17 +3025,16 @@ des groupes
 
 <br>
 
-Groupe 1: réponse à une rhizobactérie bénéfique
------------------------------------------------
+## Groupe 1: réponse à une rhizobactérie bénéfique
 
 Les échantillons sont des triplicats biologiques de :
 
--   Plantes contrôles à 0h, 30min, 1h, 3h, 6h
-    -   Plantes exposées à la rhizobactérie bénéfique *Pseudomonas
-        simiae WCS417* à 30 min, 1h, 3h et 6h
+-   Plantes contrôles à 0h, 30min, 1h, 3h, 6h  
+-   Plantes exposées à la rhizobactérie bénéfique *Pseudomonas simiae
+    WCS417* à 30 min, 1h, 3h et 6h
 
 ``` bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -3066,21 +3066,19 @@ scriptdir="${workdir}/log"
 
 <br>
 
-Groupe 2: réponse au peptide flg22 d’une rhizobactérie bénéfique
-----------------------------------------------------------------
+## Groupe 2: réponse au peptide flg22 d’une rhizobactérie bénéfique
 
 Le peptide flg22 (*“flg22Psim”*) provient de la rhizobactérie bénéfique
 *Pseudomonas simiae WCS417*
 
 Les échantillons sont des triplicats biologiques de :
 
--   Plantes contrôles (**Control**) à 0h, 30min, 1h, 3h, 6h
-    -   Plantes exposées au peptide flg22 de la rhizobactérie bénéfique
-        *Pseudomonas simiae WCS417* (**flg22Psim**) à 30 min, 1h, 3h et
-        6h
+-   Plantes contrôles (**Control**) à 0h, 30min, 1h, 3h, 6h  
+-   Plantes exposées au peptide flg22 de la rhizobactérie bénéfique
+    *Pseudomonas simiae WCS417* (**flg22Psim**) à 30 min, 1h, 3h et 6h
 
 ``` bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -3112,20 +3110,19 @@ scriptdir="${workdir}/log"
 
 <br>
 
-Groupe 3: réponse au peptide flg22 d’une bactérie pathogène
------------------------------------------------------------
+## Groupe 3: réponse au peptide flg22 d’une bactérie pathogène
 
 Le peptide flg22 (*“flg22Paer”*) provient de la bactérie pathogène
 *Pseudomonas aeruginosa*
 
 Les échantillons sont des triplicats biologiques de :
 
--   Plantes contrôles (**Control**) à 0h, 30min, 1h, 3h, 6h
-    -   Plantes exposées au peptide flg22 de la bactérie pathogène
-        *Pseudomonas aeruginosa* (**flg22Paer**) à 30 min, 1h, 3h et 6h
+-   Plantes contrôles (**Control**) à 0h, 30min, 1h, 3h, 6h  
+-   Plantes exposées au peptide flg22 de la bactérie pathogène
+    *Pseudomonas aeruginosa* (**flg22Paer**) à 30 min, 1h, 3h et 6h
 
 ``` bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -3157,17 +3154,15 @@ scriptdir="${workdir}/log"
 
 <br>
 
-Groupe 4: réponse à la chitine
-------------------------------
+## Groupe 4: réponse à la chitine
 
 Les échantillons sont des triplicats biologiques de :
 
--   Plantes contrôles (**Control**) à 0h, 30min, 1h, 3h, 6h
-    -   Plantes exposées à la chitine (**chitin**) à 30 min, 1h, 3h et
-        6h
+-   Plantes contrôles (**Control**) à 0h, 30min, 1h, 3h, 6h  
+-   Plantes exposées à la chitine (**chitin**) à 30 min, 1h, 3h et 6h
 
 ``` bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -3199,8 +3194,7 @@ scriptdir="${workdir}/log"
 
 <br>
 
-Quelques compléments pour vous aider
-------------------------------------
+## Quelques compléments pour vous aider
 
 Par rapport à ce que l’on a fait en TD, il y a plusieurs éléments qui
 diffèrent et que vous allez devoir prendre en compte pour apporter
@@ -3297,7 +3291,7 @@ Replicate
 <tbody>
 <tr>
 <td style="text-align:left;">
-C\_1h\_rep1
+C_1h_rep1
 </td>
 <td style="text-align:left;">
 C
@@ -3311,7 +3305,7 @@ rep1
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_1h\_rep2
+C_1h_rep2
 </td>
 <td style="text-align:left;">
 C
@@ -3325,7 +3319,7 @@ rep2
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_1h\_rep3
+C_1h_rep3
 </td>
 <td style="text-align:left;">
 C
@@ -3339,7 +3333,7 @@ rep3
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_3h\_rep1
+C_3h_rep1
 </td>
 <td style="text-align:left;">
 C
@@ -3353,7 +3347,7 @@ rep1
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_3h\_rep2
+C_3h_rep2
 </td>
 <td style="text-align:left;">
 C
@@ -3367,7 +3361,7 @@ rep2
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_3h\_rep3
+C_3h_rep3
 </td>
 <td style="text-align:left;">
 C
@@ -3381,7 +3375,7 @@ rep3
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_6h\_rep1
+C_6h_rep1
 </td>
 <td style="text-align:left;">
 C
@@ -3395,7 +3389,7 @@ rep1
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_6h\_rep2
+C_6h_rep2
 </td>
 <td style="text-align:left;">
 C
@@ -3409,7 +3403,7 @@ rep2
 </tr>
 <tr>
 <td style="text-align:left;">
-C\_6h\_rep3
+C_6h_rep3
 </td>
 <td style="text-align:left;">
 C
@@ -3423,7 +3417,7 @@ rep3
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_1h\_rep1
+T_1h_rep1
 </td>
 <td style="text-align:left;">
 T
@@ -3437,7 +3431,7 @@ rep1
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_1h\_rep2
+T_1h_rep2
 </td>
 <td style="text-align:left;">
 T
@@ -3451,7 +3445,7 @@ rep2
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_1h\_rep3
+T_1h_rep3
 </td>
 <td style="text-align:left;">
 T
@@ -3465,7 +3459,7 @@ rep3
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_3h\_rep1
+T_3h_rep1
 </td>
 <td style="text-align:left;">
 T
@@ -3479,7 +3473,7 @@ rep1
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_3h\_rep2
+T_3h_rep2
 </td>
 <td style="text-align:left;">
 T
@@ -3493,7 +3487,7 @@ rep2
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_3h\_rep3
+T_3h_rep3
 </td>
 <td style="text-align:left;">
 T
@@ -3507,7 +3501,7 @@ rep3
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_6h\_rep1
+T_6h_rep1
 </td>
 <td style="text-align:left;">
 T
@@ -3521,7 +3515,7 @@ rep1
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_6h\_rep2
+T_6h_rep2
 </td>
 <td style="text-align:left;">
 T
@@ -3535,7 +3529,7 @@ rep2
 </tr>
 <tr>
 <td style="text-align:left;">
-T\_6h\_rep3
+T_6h_rep3
 </td>
 <td style="text-align:left;">
 T
@@ -3549,6 +3543,7 @@ rep3
 </tr>
 </tbody>
 </table>
+
 A partir de ces données, on peut créer un objet DESeq2 où l’on spécifie
 un effet “groupe” unique:
 
@@ -3641,10 +3636,10 @@ Upregulated_Genes_At_3h <- Comparaison_t3h %>%
 
 <br>
 
-Références
-----------
+## Références
 
 Stringlis, I.A., Proietti, S., Hickman, R., Van Verk, M.C., Zamioudis,
-C., and Pieterse, C.M.J. (2018). Root transcriptional dynamics induced
-by beneficial rhizobacteria and microbial immune elicitors reveal
-signatures of adaptation to mutualists. Plant J *93*, 166–180.
+C., and Pieterse, C.M.J. (2018). <span class="nocase">Root
+transcriptional dynamics induced by beneficial rhizobacteria and
+microbial immune elicitors reveal signatures of adaptation to
+mutualists</span>. Plant J *93*, 166–180.

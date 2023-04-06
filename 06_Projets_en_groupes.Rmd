@@ -58,7 +58,7 @@ Nous pouvons récupérér la liste de ces gènes ainsi:
 # R
 
 # définir le répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 # chargement des packages
@@ -81,7 +81,7 @@ Nous pouvons récupérer les résultats des analyses d'enrichissement ainsi:
 
 ```{r, eval = FALSE}
 # Répertoire de travail
-projPath <- "/shared/projects/form_2022_07/TD_RNAseq/results/RData" 
+projPath <- "/shared/projects/2306_bioinfo_rnaseq_m1/TD_RNAseq/results/RData" 
 setwd(projPath)
 
 #Librairies
@@ -226,7 +226,7 @@ Chaque groupe analysera l'un de ces 4 stimuli en le comparant aux plantes contr�
 Les données de l'ensemble de l'étude sont stockées dans un dossier nommé `data_project`
 
 ```bash
-datadir="/shared/projects/form_2022_07/data_project"
+datadir="/shared/projects/2306_bioinfo_rnaseq_m1/data_project"
 ENAftp="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623"
 
 #Controls
@@ -316,7 +316,7 @@ Les échantillons sont des triplicats biologiques de :
   - Plantes exposées à la rhizobactérie bénéfique *Pseudomonas simiae WCS417* à 30 min, 1h, 3h et 6h
 
 ```bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -359,7 +359,7 @@ Les échantillons sont des triplicats biologiques de :
   - Plantes exposées au peptide flg22 de la rhizobactérie bénéfique *Pseudomonas simiae WCS417* (**flg22Psim**) à 30 min, 1h, 3h et 6h
 
 ```bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -401,7 +401,7 @@ Les échantillons sont des triplicats biologiques de :
   - Plantes exposées au peptide flg22 de la bactérie pathogène *Pseudomonas aeruginosa* (**flg22Paer**) à 30 min, 1h, 3h et 6h
 
 ```bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
@@ -441,7 +441,7 @@ Les échantillons sont des triplicats biologiques de :
   - Plantes exposées à la chitine (**chitin**) à 30 min, 1h, 3h et 6h
 
 ```bash
-formdir="/shared/projects/form_2022_07"
+formdir="/shared/projects/2306_bioinfo_rnaseq_m1"
 
 datadir="${formdir}/data_project"
 cd $datadir
