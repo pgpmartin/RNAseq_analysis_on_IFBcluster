@@ -23,6 +23,7 @@ qui sera suivie de l'entrée du mot de passe.
 
 ### Linux et MacOS
 Sous Linux/Mac, il suffit d'ouvrir un terminal et d'y entrer la commande ci-dessus.  
+  **Remarque:** *Rien ne s'affiche quand vous entrez votre mot de passe. C'est normal, c'est une sécurité. Votre mot de passe est bien pris en compte. Tapez-le puis validez avec ENTREE et vous devriez être connecté au serveur (sauf faute de frappe... dans ce cas essayez à nouveau!)*  
 
 ### Windows
 Sous windows, il faut installer le logiciel [Putty](https://www.putty.org/) que vous pouvez télécharger [ici](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html). Si vous avez un ordinateur relativement récent, c'est sans doute la version `64-bit x86` qu'il vous faut. En cas de doute, consultez l'[aide](https://www.chiark.greenend.org.uk/~sgtatham/putty/faq.html#faq-32bit-64bit).  
@@ -48,7 +49,8 @@ Après avoir installé Putty:
 
   - Une fois la configuration effectuée, cliquer sur `Open` pour lancer une session.  
   - Accepter l'enregistrement de l'empreinte du serveur.  
-  - Enfin, entrer username et password pour se connecter au serveur frontal.  
+  - Enfin, entrer username et password pour se connecter au serveur frontal. 
+  
   **Remarque:** *Rien ne s'affiche quand vous entrez votre mot de passe. C'est normal, c'est une sécurité. Votre mot de passe est bien pris en compte. Tapez-le puis validez avec ENTREE et vous devriez être connecté au serveur (sauf faute de frappe... dans ce cas essayez à nouveau!)*
  
 
@@ -104,8 +106,13 @@ scp *.txt <myusername>@core.cluster.france-bioinformatique.fr:/home/<myusername>
   La solution la plus simple consiste à utiliser un logiciel pour échanger des fichiers par simple glisser-déposer.  
   On peut notamment citer:  
   
-  - [FileZilla](https://filezilla-project.org/)
-  - [WinSCP](https://winscp.net/eng/download.php)
+  - [FileZilla](https://filezilla-project.org/) pour Windows, Mac et Linux  
+  - [WinSCP](https://winscp.net/eng/download.php) pour Windows  
+  - [Cyberduck](https://cyberduck.io/) pour Windows et Mac  
+  - [Forklift](https://binarynights.com/) pour Mac  
+  - [CrossFTP](https://www.crossftp.com/) pour Windows, Mac et Linux  
+  - [gFTP](https://github.com/masneyb/gftp) pour Linux  
+  - [Konqueror](https://apps.kde.org/fr/konqueror/) pour Linux  
   
   Nous allons voir comment configurer Filezilla.  
   
@@ -117,6 +124,24 @@ scp *.txt <myusername>@core.cluster.france-bioinformatique.fr:/home/<myusername>
   
   Une fois la connexion établlie, les fichiers peuvent être transférés par simple glisser-déposer.  
   
+    
+# Lire et écrire des scripts
+  
+Un script est un fichier texte contenant du code. Pour lire et écrire des scripts, il est utile d'utiliser un logiciel capable de reconnaitre le code qui est tapé et d'y ajouter des couleurs pour le rendre plus lisible. On appelle cela le "syntax highlighting".  
 
+> Dans tous les cas, il ne faut **jamais** utiliser un logiciel de traitement de texte comme MS Word ou bien OpenOffice Writer pour travailler sur des scripts mais uniquement des éditeurs de texte. Si vous croisez des fichiers qui ont été générés avec ce type de logiciel, il pourra être nécessaire de les convertir à l'aide de la commande [`dos2unix`](https://dos2unix.sourceforge.io/dos2unix/fr/man1/dos2unix.htm)  
+
+Il existe de simples éditeurs avec "syntax highlighting" ou bien des logiciels plus avancés incluant d'autres outils (autocomplétion, détection de bugs, navigateurs, etc.) qu'on appelle des Environnements de Développement Intégré (IDE en anglais pour "Integrated Development Environment""). [RStudio](https://posit.co/products/open-source/rstudio/) est un exemple d'IDE.  
+
+  
+Voici quelques logiciels que vous pourrez utiliser pour lire et écrire des scripts :  
+
+  - [Visual Studio Code](https://code.visualstudio.com/) pour Windows, Mac et Linux
+  - [RStudio](https://posit.co/products/open-source/rstudio/) pour Windows, Mac et Linux
+  - [Notepad++](https://notepad-plus-plus.org/) pour Windows  
+  - [Eclipse](https://www.eclipse.org/downloads/) pour Windows, Mac et Linux
+  - [Brackets](https://brackets.io/) pour Windows et Mac
+  - [Geany](https://www.geany.org/) pour Windows, Mac et Linux
+  - [Sublime Text](https://www.sublimetext.com/) pour Windows, Mac et Linux
 
 
